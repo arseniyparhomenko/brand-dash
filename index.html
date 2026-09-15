@@ -1,0 +1,1359 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Brand Performance Dashboard</title>
+<style>
+  :root{
+    --bg:#f4f2ec; --card:#ffffff; --ink:#17181a; --ink-soft:#575149; --ink-faint:#948d83;
+    --line:rgba(23,24,26,.11); --line-soft:rgba(23,24,26,.055);
+    --accent:#17706b; --accent-soft:rgba(23,112,107,.10);
+    --up:#1a7a4a; --down:#c0432f; --amber:#b4762e; --neutral:#7b7570;
+    --s2:#b4762e; --s3:#5f6bb0; --s4:#a8497b; --s5:#5a8f57;
+    --radius:13px;
+  }
+  body.geo-mm{ --accent:#b0552b; --accent-soft:rgba(176,85,43,.10); }
+  *{box-sizing:border-box;}
+  html,body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    font-variant-numeric:tabular-nums;-webkit-font-smoothing:antialiased;font-size:15px;}
+  h1,h2,h3{font-family:Georgia,"Iowan Old Style","Times New Roman",serif;font-weight:600;letter-spacing:-.01em;}
+  .wrap{max-width:1240px;margin:0 auto;padding:0 20px 70px;}
+
+  /* ---------- header ---------- */
+  .topbar{position:sticky;top:0;z-index:30;background:rgba(244,242,236,.94);backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--line);}
+  .topbar .inner{max-width:1240px;margin:0 auto;padding:12px 20px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+  .brand{display:flex;flex-direction:column;margin-right:auto;}
+  .brand .eyebrow{font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);font-weight:800;}
+  .brand h1{font-size:19px;margin:1px 0 0;}
+  .ctrl{display:flex;align-items:center;gap:8px;}
+  select,.btn{font:inherit;font-size:13px;border-radius:9px;border:1px solid var(--line);background:var(--card);
+    color:var(--ink);padding:7px 11px;cursor:pointer;}
+  .btn:hover{border-color:var(--accent);color:var(--accent);}
+  .btn.primary{background:var(--accent);color:#fff;border-color:var(--accent);font-weight:600;}
+  .btn.primary:hover{opacity:.9;color:#fff;}
+  .btn.on{background:var(--accent);color:#fff;border-color:var(--accent);}
+  .seg{display:inline-flex;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:3px;}
+  .seg button{font:inherit;font-size:13px;font-weight:600;border:0;background:transparent;color:var(--ink-soft);
+    padding:6px 14px;border-radius:8px;cursor:pointer;}
+  .seg button.on{background:var(--accent);color:#fff;}
+  .monthSeg{display:flex;gap:2px;overflow-x:auto;max-width:min(46vw,300px);
+    background:var(--card);border:1px solid var(--line);border-radius:10px;padding:3px;
+    scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch;}
+  .monthSeg::-webkit-scrollbar{height:0;}
+  .monthSeg button{font:inherit;font-size:13px;font-weight:600;border:0;background:transparent;color:var(--ink-soft);
+    padding:6px 11px;border-radius:8px;cursor:pointer;white-space:nowrap;flex:0 0 auto;scroll-snap-align:end;}
+  .monthSeg button.on{background:var(--accent);color:#fff;}
+  @media(max-width:640px){.monthSeg{max-width:52vw;}}
+
+  .savemsg{font-size:12.5px;color:var(--ink-faint);max-width:210px;line-height:1.3;}
+  .savemsg.ok{color:var(--up);} .savemsg.err{color:var(--down);}
+  .booting{padding:60px 0;text-align:center;color:var(--ink-faint);font-size:14px;}
+
+  .modal-ov{position:fixed;inset:0;background:rgba(20,16,10,.45);display:none;align-items:center;justify-content:center;z-index:50;padding:20px;}
+  .modal-ov.show{display:flex;}
+  .modal-card{background:var(--paper);border-radius:14px;max-width:560px;width:100%;max-height:82vh;
+    display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,.25);}
+  .modal-head{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--line);}
+  .modal-head h3{margin:0;font-size:16px;}
+  .modal-x{border:0;background:transparent;font-size:20px;cursor:pointer;color:var(--ink-faint);line-height:1;}
+  .modal-body{padding:16px 20px;overflow-y:auto;font-size:13.5px;line-height:1.55;}
+  .modal-body h4{margin:14px 0 6px;font-size:13px;color:var(--ink-faint);text-transform:uppercase;letter-spacing:.03em;}
+  .modal-body ul{margin:0 0 4px;padding-left:20px;}
+  .modal-row{display:flex;justify-content:space-between;gap:10px;padding:5px 0;border-bottom:1px dashed var(--line);}
+  .modal-row .tag{font-size:11px;font-weight:700;padding:1px 7px;border-radius:6px;white-space:nowrap;}
+  .modal-row .tag.new{background:#e4f3ea;color:#1f7a45;}
+  .modal-row .tag.overwrite{background:#fdecec;color:#b23b3b;}
+  .modal-warn{color:#a5680a;}
+  .modal-foot{padding:14px 20px;border-top:1px solid var(--line);display:flex;justify-content:flex-end;gap:10px;}
+
+  /* ---------- tabs ---------- */
+  .tabs{display:flex;gap:2px;overflow-x:auto;border-bottom:1px solid var(--line);margin:18px 0 22px;}
+  .tabs button{font:inherit;font-size:13.5px;font-weight:600;border:0;background:transparent;color:var(--ink-faint);
+    padding:10px 14px;cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;}
+  .tabs button:hover{color:var(--ink);}
+  .tabs button.on{color:var(--accent);border-bottom-color:var(--accent);}
+
+  /* ---------- generic blocks ---------- */
+  .sec-head{display:flex;align-items:baseline;gap:12px;margin:0 0 14px;}
+  .sec-head h2{font-size:20px;margin:0;}
+  .sec-head .hint{font-size:12.5px;color:var(--ink-faint);}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:16px 17px;}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(330px,1fr));gap:15px;}
+  .grid .full{grid-column:1/-1;}
+  .card h3{font-size:14.5px;margin:0 0 12px;}
+  .stack{display:flex;flex-direction:column;gap:15px;}
+
+  /* ---------- kpi ---------- */
+  .hero{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px;margin-bottom:20px;}
+  .hcard{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 17px 14px;}
+  .hcard .l{font-size:11px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:var(--ink-soft);}
+  .hcard .row{display:flex;align-items:flex-end;justify-content:space-between;gap:10px;margin-top:9px;}
+  .hcard .v{font-size:33px;font-weight:700;letter-spacing:-.025em;line-height:1;}
+  .hcard .spark{width:96px;height:32px;flex:0 0 96px;}
+  .hcard .d{font-size:13px;font-weight:700;margin-top:8px;}
+  .hcard .pv{font-size:11.5px;color:var(--ink-faint);margin-top:3px;}
+  .movers{display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-bottom:20px;}
+  @media(max-width:760px){.movers{grid-template-columns:1fr;}}
+  .mv{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid var(--line-soft);font-size:13.5px;}
+  .mv:last-child{border-bottom:none;}
+  .mv b{font-weight:700;white-space:nowrap;}
+  .work{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:0;
+    background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden;}
+  .work .w{padding:14px 16px;border-right:1px solid var(--line-soft);}
+  .work .w:last-child{border-right:none;}
+  .work .w .l{font-size:10.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-faint);}
+  .work .w .v{font-size:19px;font-weight:700;margin-top:5px;line-height:1.25;}
+  .work .w .s{font-size:12px;color:var(--ink-faint);margin-top:3px;}
+  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(168px,1fr));gap:12px;margin-bottom:18px;}
+  .kpi{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:13px 15px;}
+  .kpi .l{font-size:10.5px;color:var(--ink-soft);font-weight:700;text-transform:uppercase;letter-spacing:.07em;}
+  .kpi .v{font-size:25px;font-weight:700;margin-top:6px;letter-spacing:-.02em;}
+  .kpi .d{font-size:12px;font-weight:700;margin-top:4px;display:inline-flex;gap:4px;align-items:center;}
+  .kpi .pv{font-size:11px;color:var(--ink-faint);margin-top:2px;}
+  .d.up{color:var(--up);} .d.down{color:var(--down);} .d.flat{color:var(--ink-faint);}
+
+  /* ---------- tables ---------- */
+  th.mgrp,td.mgrp{border-left:2px solid rgba(23,24,26,.22);}
+  th.mcur,td.mcur{background:var(--accent-soft);}
+  thead th.mhead{text-align:center;font-size:11px;color:var(--ink);letter-spacing:.08em;
+    padding-bottom:5px;border-bottom:1px solid var(--line);}
+  thead th.mhead.mcur{color:var(--accent);}
+  tfoot td.mcur{background:var(--accent-soft);}
+  .t-wrap{overflow-x:auto;}
+  table{width:100%;border-collapse:collapse;font-size:13px;}
+  thead th{text-align:left;font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-faint);
+    font-weight:800;padding:8px 9px;border-bottom:1px solid var(--line);white-space:nowrap;}
+  tbody td{padding:8px 9px;border-bottom:1px solid var(--line-soft);vertical-align:top;}
+  tbody tr:last-child td{border-bottom:none;}
+  td.num,th.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap;}
+  td.name{font-weight:600;min-width:130px;}
+  tfoot td{padding:9px;font-weight:700;border-top:1.5px solid var(--line);font-size:13px;}
+  .roi-pos{color:var(--up);font-weight:700;}
+  .roi-neg{color:var(--down);font-weight:700;}
+  .dmini{font-size:11px;font-weight:700;margin-left:6px;white-space:nowrap;}
+  .dmini.up{color:var(--up);} .dmini.down{color:var(--down);} .dmini.flat{color:var(--ink-faint);}
+  .dmini.new{color:var(--accent);}
+  .rowdel{visibility:hidden;border:0;background:transparent;color:var(--down);cursor:pointer;font-size:15px;padding:0 4px;}
+  body.editing .rowdel{visibility:visible;}
+
+  /* ---------- retention ---------- */
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:15px;}
+  @media(max-width:760px){.two{grid-template-columns:1fr;}}
+  .lst{list-style:none;margin:0;padding:0;font-size:13.5px;line-height:1.55;}
+  .lst li{padding:7px 0 7px 20px;border-bottom:1px solid var(--line-soft);position:relative;}
+  .lst li:last-child{border-bottom:none;}
+  .lst.good li::before{content:"▲";position:absolute;left:0;color:var(--up);font-size:10px;top:10px;}
+  .lst.bad li::before{content:"▼";position:absolute;left:0;color:var(--down);font-size:10px;top:10px;}
+
+  /* ---------- signature: loop card ---------- */
+  .loop{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:0;overflow:hidden;}
+  .loop .lp-h{display:flex;align-items:center;gap:10px;padding:13px 16px;border-bottom:1px solid var(--line-soft);
+    background:var(--accent-soft);}
+  .loop .lp-h .n{font-size:11px;font-weight:800;letter-spacing:.1em;color:var(--accent);text-transform:uppercase;}
+  .lp-step{display:grid;grid-template-columns:118px 1fr;gap:14px;padding:12px 16px;border-bottom:1px solid var(--line-soft);}
+  .lp-step:last-child{border-bottom:none;}
+  .lp-step .k{font-size:10.5px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:var(--ink-faint);padding-top:2px;}
+  .lp-step .val{font-size:13.5px;line-height:1.55;}
+  .lp-step.next{background:rgba(23,24,26,.025);}
+  .lp-step.next .k{color:var(--accent);}
+  .lp-step.next .k::before{content:"↺ ";}
+  .chips{display:flex;gap:6px;flex-wrap:wrap;}
+  .chip{font-size:12px;background:var(--accent-soft);color:var(--accent);border-radius:20px;padding:3px 10px;font-weight:600;}
+
+  /* ---------- signature: project rail ---------- */
+  .proj{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:15px 17px;}
+  .proj .ph{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:13px;}
+  .proj .ph h3{margin:0;font-size:16px;}
+  .rail{display:grid;grid-template-columns:repeat(4,1fr);gap:0;}
+  @media(max-width:900px){.rail{grid-template-columns:1fr;}}
+  .rail .st{position:relative;padding:0 16px 0 0;}
+  .rail .st:not(:last-child)::after{content:"→";position:absolute;right:2px;top:22px;color:var(--ink-faint);font-size:13px;}
+  @media(max-width:900px){
+    .rail .st{padding:0 0 14px;}
+    .rail .st:not(:last-child)::after{content:"↓";right:auto;left:0;top:auto;bottom:-1px;}
+    .rail .st{padding-left:16px;}
+  }
+  .rail .st .k{font-size:10px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:var(--ink-faint);
+    padding-bottom:6px;margin-bottom:8px;border-bottom:2px solid var(--line);}
+  .rail .st:nth-child(3) .k{border-bottom-color:var(--accent);color:var(--accent);}
+  .rail .st .val{font-size:13px;line-height:1.55;color:var(--ink-soft);}
+  .badge{font-size:10.5px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;padding:3px 9px;border-radius:20px;
+    border:1px solid var(--line);color:var(--ink-soft);}
+  .badge.done{background:rgba(26,122,74,.10);color:var(--up);border-color:transparent;}
+  .badge.run{background:var(--accent-soft);color:var(--accent);border-color:transparent;}
+  .badge.plan{background:rgba(180,118,46,.12);color:var(--amber);border-color:transparent;}
+  .badge.stop{background:rgba(192,67,47,.10);color:var(--down);border-color:transparent;}
+
+  /* ---------- charts ---------- */
+  .hbars{display:flex;flex-direction:column;gap:3px;padding:2px 0 6px;}
+  .hbar{display:flex;align-items:center;gap:11px;font-size:12.5px;}
+  .hbar .nm{flex:0 0 42%;max-width:42%;color:var(--ink);font-weight:600;line-height:1.35;
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .hbar .track{flex:1;height:17px;background:var(--line-soft);border-radius:4px;overflow:hidden;}
+  .hbar .fill{height:100%;border-radius:4px;min-width:2px;}
+  .hbar .v{flex:0 0 66px;text-align:right;font-weight:700;font-variant-numeric:tabular-nums;}
+  @media(max-width:640px){
+    .hbar{flex-wrap:wrap;gap:4px;margin-bottom:6px;}
+    .hbar .nm{flex:0 0 100%;max-width:100%;white-space:normal;}
+    .hbar .v{flex:0 0 60px;}
+  }
+  .legend{display:flex;gap:14px;flex-wrap:wrap;margin:0 0 8px;font-size:12px;color:var(--ink-soft);}
+  .legend span{display:inline-flex;align-items:center;gap:5px;}
+  .legend i{width:10px;height:10px;border-radius:3px;}
+  svg .grid-l{stroke:var(--line-soft);stroke-width:1;}
+  svg .axis-t{fill:var(--ink-faint);font-size:10px;}
+  svg .dot{stroke:#fff;stroke-width:1.5;}
+  .empty{padding:26px;text-align:center;color:var(--ink-faint);font-size:13px;}
+
+  /* ---------- editing ---------- */
+  [data-path]{border-radius:5px;}
+  body.editing [data-path]{outline:1px dashed rgba(23,112,107,.35);outline-offset:2px;min-width:26px;display:inline-block;}
+  body.editing [data-path]:focus{outline:2px solid var(--accent);background:#fff;}
+  .only-edit{display:none;}
+  body.editing .only-edit{display:inline-block;}
+  .addrow{display:none;margin-top:10px;}
+  body.editing .addrow{display:inline-block;}
+  .editnote{display:none;background:var(--accent-soft);border:1px solid var(--accent);border-radius:10px;
+    padding:10px 14px;font-size:12.5px;color:var(--accent);margin-bottom:16px;line-height:1.5;font-weight:600;}
+  body.editing .editnote{display:block;}
+  .demo{background:rgba(180,118,46,.12);border:1px solid rgba(180,118,46,.35);color:#8a5a1f;border-radius:10px;
+    padding:10px 14px;font-size:12.5px;margin:16px 0 0;line-height:1.5;}
+  .foot{margin-top:26px;font-size:12px;color:var(--ink-faint);text-align:center;}
+
+  @media print{
+    .topbar,.tabs,.addrow,.rowdel,.editnote{display:none!important;}
+    body{background:#fff;} .card,.proj,.loop{break-inside:avoid;}
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="inner">
+    <div class="brand">
+      <div class="eyebrow" id="eyebrow">Brand Performance</div>
+      <h1 id="ttl">Дашборд бренд-менеджера</h1>
+    </div>
+    <div class="ctrl">
+      <div class="seg" id="geoSeg"></div>
+      <div class="monthSeg" id="monthSeg" title="Месяц отчёта"></div>
+      <button class="btn" id="importBtn" title="Загрузить месячный HTML-артефакт от Насти">⬆ Импорт</button>
+      <input type="file" id="importFile" accept=".html,.htm" style="display:none">
+      <button class="btn" id="editBtn" title="Включить правку прямо в таблицах">✎ Редактировать</button>
+      <button class="btn" id="saveBtn" title="Записать прямо сейчас, не дожидаясь автосохранения" style="display:none">💾 Сохранить сейчас</button>
+      <span class="savemsg" id="saveMsg"></span>
+      <button class="btn" id="moreBtn" title="Ещё">⋯</button>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="tabs" id="tabs"></div>
+  <div class="editnote">
+    Режим правки включён. Кликайте по любому числу или тексту и печатайте поверх — итоги и проценты пересчитываются сами.
+    <b>Всё сохраняется само</b> через секунду после того, как вы закончили печатать. Следите за подписью справа от кнопок: «Сохранено в 14:32» значит, что данные уже на сервере.
+  </div>
+  <div id="app"></div>
+  <div class="foot" id="foot"></div>
+</div>
+
+
+<div class="modal-ov" id="modalOv">
+  <div class="modal-card">
+    <div class="modal-head"><h3 id="modalTitle"></h3><button class="modal-x" id="modalClose">×</button></div>
+    <div class="modal-body" id="modalBody"></div>
+    <div class="modal-foot" id="modalFoot"></div>
+  </div>
+</div>
+<script>
+(function(){
+"use strict";
+
+var D = null;          /* заполняется в boot() */
+var AUTHED = false;    /* сессия подтверждена сервером */
+var DIRTY = false;     /* есть несохранённые правки */
+var REV = 0;           /* номер версии на сервере */
+var SAVING = false;
+var SAVE_TIMER = null;
+var RETRY = 0;
+var CHANGE_SEQ = 0;    /* счётчик правок — ловит те, что сделаны во время отправки */
+var STORAGE_OK = true; /* подключено ли хранилище */
+var COLORS = ['var(--accent)','var(--s2)','var(--s3)','var(--s4)','var(--s5)'];
+var STATE = { geo: null, month: null, tab: 'totals', editing:false };
+
+var TABS = [
+  {id:'totals',   name:'Main Board'},
+  {id:'tourn',    name:'Казино'},
+  {id:'agents',   name:'Агенты',  geos:['mm']}
+];
+
+var TOTAL_FIELDS = [
+  {k:'betsSport',       l:'Ставки СПОРТ, шт.',   unit:''},
+  {k:'betsCasino',      l:'Ставки КАЗИНО, шт.',  unit:''},
+  {k:'usersSport',      l:'Юзеры СПОРТ',         unit:''},
+  {k:'usersCasino',     l:'Юзеры КАЗИНО',        unit:''},
+  {k:'usersDeposit',    l:'Юзеров с депозитами', unit:''},
+  {k:'depositsTotal',   l:'Депозитов всего',     unit:''},
+  {k:'retentionRate',   l:'Retention Rate',      unit:'%'},
+  {k:'newRegistrations',l:'New registrations',   unit:''},
+  {k:'reactivated',     l:'Реактивировано юзеров', unit:''}
+];
+
+/* ---------- helpers ---------- */
+function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){
+  return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+
+function fmt(v,unit){
+  if(v===null||v===undefined||v==='') return '—';
+  if(typeof v!=='number'||isNaN(v)) return String(v);
+  if(unit==='%'){ var t=(v*100).toFixed(2).replace(/(\.\d*?)0+$/,'$1').replace(/\.$/,''); return t+'%'; }
+  var abs=Math.abs(v), s;
+  s = abs>=1000 ? Math.round(v).toLocaleString('ru-RU').replace(/\u00a0/g,' ')
+                : (Math.round(v*100)/100).toString();
+  return unit==='$' ? '$'+s : (unit ? s+' '+unit : s);
+}
+function parseNum(t){
+  if(t==null) return null;
+  var s=String(t).replace(/\s|\u00a0|\$|₴/g,'').replace(',', '.').replace(/[^\d.\-]/g,'');
+  if(s==='' ) return null;
+  var n=parseFloat(s); return isNaN(n)?null:n;
+}
+function getPath(p){
+  var parts=p.split('.'), o=D;
+  for(var i=0;i<parts.length;i++){ if(o==null) return null; o=o[parts[i]]; }
+  return o;
+}
+function setPath(p,val){
+  var parts=p.split('.'), o=D;
+  for(var i=0;i<parts.length-1;i++){
+    if(o[parts[i]]==null) o[parts[i]] = /^\d+$/.test(parts[i+1]) ? [] : {};
+    o=o[parts[i]];
+  }
+  o[parts[parts.length-1]]=val;
+}
+function base(){ return 'data.'+STATE.geo+'.'+STATE.month; }
+function cur(){
+  var g=D.data[STATE.geo]||{}; 
+  return g[STATE.month] || null;
+}
+function prevMonthId(){
+  var i=D.months.map(function(m){return m.id;}).indexOf(STATE.month);
+  return i>0 ? D.months[i-1].id : null;
+}
+function prevData(){
+  var pm=prevMonthId(); if(!pm) return null;
+  return (D.data[STATE.geo]||{})[pm]||null;
+}
+function monthLabel(id){
+  var m=D.months.filter(function(x){return x.id===id;})[0];
+  return m?m.label:id;
+}
+function monthShort(id){
+  var full=monthLabel(id), parts=full.split(' ');
+  if(parts.length>=2 && /^\d{4}$/.test(parts[parts.length-1])){
+    return parts[0].slice(0,3)+' \''+parts[parts.length-1].slice(2);
+  }
+  return full.length>8 ? full.slice(0,7)+'…' : full;
+}
+function geoName(id){
+  var g=D.geos.filter(function(x){return x.id===id;})[0];
+  return g?g.name:id;
+}
+/* editable cell */
+function ed(path,value,unit,cls){
+  var isText = (unit==='text'||unit===undefined);
+  var disp = isText ? esc(value==null?'':value) : fmt(value,unit);
+  var type = isText ? 'text' : (unit==='%' ? 'pct' : 'num');
+  return '<span data-path="'+esc(path)+'" data-type="'+type+'" class="'+(cls||'')+'">'+disp+'</span>';
+}
+function delta(c,p,better){
+  if(typeof c!=='number'||typeof p!=='number'||p===0) return '';
+  var dp=(c-p)/Math.abs(p), up=c>=p, good = better==='down' ? !up : up;
+  var flat=Math.abs(dp)<0.001, cls=flat?'flat':(good?'up':'down'), ar=flat?'→':(up?'▲':'▼');
+  var dv=(Math.abs(dp)*100).toFixed(1).replace(/\.0$/,'');
+  return '<div class="d '+cls+'">'+ar+' '+dv+'%</div>';
+}
+function statusBadge(s){
+  var t=(s||'').toLowerCase(), c='';
+  if(t.indexOf('сработ')>=0||t.indexOf('готов')>=0||t.indexOf('успеш')>=0) c='done';
+  else if(t.indexOf('работ')>=0||t.indexOf('запущ')>=0||t.indexOf('тест')>=0||t.indexOf('частич')>=0) c='run';
+  else if(t.indexOf('план')>=0) c='plan';
+  else if(t.indexOf('не помог')>=0||t.indexOf('отмен')>=0||t.indexOf('стоп')>=0) c='stop';
+  return '<span class="badge '+c+'">'+esc(s||'—')+'</span>';
+}
+
+/* ---------- chart ---------- */
+function chart(ch){
+  var W=560,H=200,padL=52,padR=14,padT=10,padB=26;
+  var xs=ch.x||[], series=ch.series||[];
+  var all=[]; series.forEach(function(s){ s.data.forEach(function(v){ if(typeof v==='number'&&!isNaN(v)) all.push(v); }); });
+  if(!all.length) return '<div class="empty">нет данных</div>';
+  var max=Math.max.apply(null,all.concat([0])), min=Math.min.apply(null,all.concat([0]));
+  if(max===min) max=min+1;
+  var iw=W-padL-padR, ih=H-padT-padB;
+  var X=function(i){ return padL+(xs.length<=1? iw/2 : (i/(xs.length-1))*iw); };
+  var Y=function(v){ return padT+ih-((v-min)/(max-min))*ih; };
+  var grid='',yl='';
+  for(var t=0;t<=4;t++){
+    var val=min+(max-min)*t/4, y=Y(val);
+    grid+='<line class="grid-l" x1="'+padL+'" y1="'+y+'" x2="'+(W-padR)+'" y2="'+y+'"/>';
+    yl+='<text class="axis-t" x="'+(padL-6)+'" y="'+(y+3)+'" text-anchor="end">'+esc(shortNum(val,ch.unit))+'</text>';
+  }
+  var xl='';
+  xs.forEach(function(x,i){ xl+='<text class="axis-t" x="'+X(i)+'" y="'+(H-8)+'" text-anchor="middle">'+esc(x)+'</text>'; });
+  var body='';
+  if(ch.type==='bar'){
+    var g=xs.length, sc=series.length, bw=iw/Math.max(1,g)/(sc+0.5);
+    series.forEach(function(s,si){
+      var c=COLORS[si%COLORS.length];
+      s.data.forEach(function(v,i){
+        if(typeof v!=='number'||isNaN(v)) return;
+        var x=padL+(i+0.15)/Math.max(1,g)*iw+si*bw, y=Y(Math.max(v,min)), h=Y(min)-y;
+        body+='<rect x="'+x.toFixed(1)+'" y="'+y.toFixed(1)+'" width="'+(bw*0.9).toFixed(1)+'" height="'+Math.max(0,h).toFixed(1)+'" rx="2" fill="'+c+'"><title>'+esc(s.name)+' · '+esc(xs[i])+': '+fmt(v,ch.unit)+'</title></rect>';
+      });
+    });
+  } else {
+    series.forEach(function(s,si){
+      var c=COLORS[si%COLORS.length], d='', on=false;
+      s.data.forEach(function(v,i){
+        if(typeof v!=='number'||isNaN(v)){ on=false; return; }
+        d+=(on?'L':'M')+X(i).toFixed(1)+' '+Y(v).toFixed(1)+' '; on=true;
+      });
+      body+='<path d="'+d+'" fill="none" stroke="'+c+'" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/>';
+      s.data.forEach(function(v,i){
+        if(typeof v!=='number'||isNaN(v)) return;
+        body+='<circle class="dot" cx="'+X(i).toFixed(1)+'" cy="'+Y(v).toFixed(1)+'" r="3.4" fill="'+c+'"><title>'+esc(s.name)+' · '+esc(xs[i])+': '+fmt(v,ch.unit)+'</title></circle>';
+      });
+    });
+  }
+  return '<svg viewBox="0 0 '+W+' '+H+'" width="100%" preserveAspectRatio="xMidYMid meet">'+grid+yl+xl+body+'</svg>';
+}
+function shortNum(v,unit){
+  if(unit==='%') return (v*100).toFixed(0)+'%';
+  var a=Math.abs(v);
+  if(a>=1000000) return (v/1000000).toFixed(1).replace(/\.0$/,'')+'M';
+  if(a>=1000) return Math.round(v/1000)+'k';
+  return (Math.round(v*100)/100).toString();
+}
+function hbars(items, color){
+  var vals=items.map(function(i){return typeof i.value==='number'?i.value:0;});
+  var max=Math.max.apply(null,vals.concat([0]));
+  if(!max) return '<div class="empty">нет данных</div>';
+  var sorted=items.slice().sort(function(a,b){ return (b.value||0)-(a.value||0); });
+  return '<div class="hbars">'+sorted.map(function(i){
+    var v=typeof i.value==='number'?i.value:0;
+    var w=Math.max(0.5,(v/max)*100);
+    return '<div class="hbar"><div class="nm" title="'+esc(i.name)+'">'+esc(i.name)+'</div>'+
+      '<div class="track"><div class="fill" style="width:'+w.toFixed(1)+'%;background:'+color+'"></div></div>'+
+      '<div class="v">'+fmt(v,'')+'</div></div>';
+  }).join('')+'</div>';
+}
+function legend(series){
+  if(!series||series.length<2) return '';
+  return '<div class="legend">'+series.map(function(s,i){
+    return '<span><i style="background:'+COLORS[i%COLORS.length]+'"></i>'+esc(s.name)+'</span>';
+  }).join('')+'</div>';
+}
+function seriesOverMonths(geo,pick){
+  return D.months.map(function(m){
+    var o=(D.data[geo]||{})[m.id];
+    var v = o ? pick(o) : null;
+    return (typeof v==='number')?v:null;
+  });
+}
+
+/* ---------- sections ---------- */
+function sendMode(){
+  var g=D.geos.filter(function(x){ return x.id===STATE.geo; })[0];
+  return (g&&g.sendMode)||'volume';
+}
+function unk(){ return '<span style="color:var(--ink-faint);font-size:12px">не известно</span>'; }
+function sendTable(title,key,rows,firstCol){
+  var b=base(), cr=(sendMode()==='cr');
+  var head = cr
+    ? '<tr><th>'+esc(firstCol)+'</th><th class="num">PM · CR</th><th class="num">Push · CR</th>'+
+      '<th class="num">Email · OR</th><th class="num">Email · CR</th><th></th></tr>'
+    : '<tr><th>'+esc(firstCol)+'</th><th>Канал</th><th class="num">Отправлено</th>'+
+      '<th class="num">Click Rate</th><th class="num">Кликов</th><th></th></tr>';
+  var body=rows.map(function(x,i){
+    var rb=b+'.'+key+'.'+i;
+    var cells = cr
+      ? '<td class="num">'+ed(rb+'.pm',x.pm,'%')+'</td>'+
+        '<td class="num">'+ed(rb+'.push',x.push,'%')+'</td>'+
+        '<td class="num">'+((typeof x.emailOR==='number'||STATE.editing)
+            ? ed(rb+'.emailOR',(typeof x.emailOR==='number'?x.emailOR:null),'%') : unk())+'</td>'+
+        '<td class="num">'+((typeof x.emailCR==='number'||STATE.editing)
+            ? ed(rb+'.emailCR',(typeof x.emailCR==='number'?x.emailCR:null),'%') : unk())+'</td>'
+      : '<td>'+ed(rb+'.channel',x.channel,'text')+'</td>'+
+        '<td class="num">'+ed(rb+'.sent',x.sent,'')+'</td>'+
+        '<td class="num">'+ed(rb+'.cr',x.cr,'%')+'</td>'+
+        '<td class="num">'+ed(rb+'.clicks',x.clicks,'')+'</td>';
+    return '<tr><td class="name">'+(i+1)+'. '+ed(rb+'.name',x.name,'text')+'</td>'+cells+
+      '<td><button class="rowdel" data-del="'+b+'.'+key+'|'+i+'">×</button></td></tr>';
+  }).join('');
+  return '<div class="card full" style="margin-top:15px"><h3>'+esc(title)+'</h3><div class="t-wrap"><table>'+
+    '<thead>'+head+'</thead><tbody>'+
+    (body||'<tr><td colspan="6" class="empty">Данных пока нет — включите правку и добавьте строки</td></tr>')+
+    '</tbody></table></div><button class="btn addrow" data-add="'+key+'">+ Добавить строку</button></div>';
+}
+
+function reactTable(rows){
+  var b=base(), t={base:0,act:0,profit:0};
+  var body=rows.map(function(x,i){
+    var rb=b+'.reactivation.'+i;
+    t.base+=num(x.base)||0; t.act+=num(x.activated)||0; t.profit+=num(x.profit)||0;
+    return '<tr><td class="name">'+ed(rb+'.vertical',x.vertical,'text')+'</td>'+
+      '<td>'+ed(rb+'.segment',x.segment,'text')+'</td>'+
+      '<td>'+ed(rb+'.inactivity',x.inactivity,'text')+'</td>'+
+      '<td class="num">'+ed(rb+'.base',x.base,'')+'</td>'+
+      '<td class="num">'+ed(rb+'.activated',x.activated,'')+'</td>'+
+      '<td class="num">'+ed(rb+'.ctr',x.ctr,'%')+'</td>'+
+      '<td class="num">'+((typeof x.arppu==='number'||STATE.editing)?ed(rb+'.arppu',(typeof x.arppu==='number'?x.arppu:null),''):unk())+'</td>'+
+      '<td class="num">'+((typeof x.profit==='number'||STATE.editing)?ed(rb+'.profit',(typeof x.profit==='number'?x.profit:null),''):unk())+'</td>'+
+      '<td><button class="rowdel" data-del="'+b+'.reactivation|'+i+'">×</button></td></tr>';
+  }).join('');
+  var tctr = t.base>0 ? t.act/t.base : null;
+  return '<div class="card full" style="margin-top:15px"><h3>Реактивация</h3>'+
+    '<div style="font-size:12px;color:var(--ink-faint);margin:-6px 0 10px">Кампании типа reactivation за месяц. CTR таргет — доля активированных от базы</div>'+
+    '<div class="t-wrap"><table><thead><tr><th>Вертикаль</th><th>Сегмент</th><th>Неактивность</th>'+
+    '<th class="num">База таргет</th><th class="num">Активировано</th><th class="num">CTR таргет</th>'+
+    '<th class="num">ARPPU таргет</th><th class="num">Экстра профит</th><th></th></tr></thead><tbody>'+
+    (body||'<tr><td colspan="9" class="empty">Кампаний реактивации за месяц не было</td></tr>')+'</tbody>'+
+    (rows.length?'<tfoot><tr><td>Итого</td><td></td><td></td><td class="num">'+fmt(t.base,'')+
+      '</td><td class="num">'+fmt(t.act,'')+'</td><td class="num">'+(tctr==null?'—':fmt(tctr,'%'))+
+      '</td><td class="num"></td><td class="num">'+fmt(t.profit,'')+'</td><td></td></tr></tfoot>':'')+
+    '</table></div><button class="btn addrow" data-add="reactivation">+ Добавить строку</button></div>';
+}
+
+function secTotals(){
+  var c=cur(), p=prevData();
+  if(!c) return emptyMonth();
+  var html='<div class="sec-head"><h2>Main Board</h2><div class="hint">'+esc(geoName(STATE.geo))+' · '+esc(monthLabel(STATE.month))+(p?' · сравнение с '+esc(monthLabel(prevMonthId())):'')+'</div></div>';
+  var ids=D.months.map(function(m){ return m.id; });
+  var cut=ids.indexOf(STATE.month);
+  html+='<div class="kpis">'+TOTAL_FIELDS.map(function(f){
+    var v=c.totals?c.totals[f.k]:null, pv=null, pvMid=null;
+    for(var i=cut-1;i>=0;i--){
+      var o=(D.data[STATE.geo]||{})[ids[i]];
+      var x=o&&o.totals?o.totals[f.k]:null;
+      if(typeof x==='number'){ pv=x; pvMid=ids[i]; break; }
+    }
+    if(v==null && pv==null) return '';
+    var gap = (pvMid && cut>0 && pvMid!==ids[cut-1]);
+    return '<div class="kpi"><div class="l">'+esc(f.l)+'</div>'+
+      '<div class="v">'+ed(base()+'.totals.'+f.k, v, f.unit)+'</div>'+
+      delta(v,pv,'up')+
+      (typeof pv==='number'
+        ? '<div class="pv">было '+fmt(pv,f.unit)+(gap?' ('+esc(monthLabel(pvMid))+')':'')+'</div>'
+        : '')+'</div>';
+  }).join('')+'</div>';
+
+  html+=promoBlock();
+
+  html+=sendTable('ТОП отправки СПОРТ','topSport',c.topSport||[],'Отправка');
+  html+=sendTable('ТОП отправки КАЗИНО','topCasino',c.topCasino||[],'Отправка');
+  html+=reactTable(c.reactivation||[]);
+  return html;
+}
+
+function num(v){ return typeof v==='number'?v:null; }
+function shorten(s){ s=String(s||''); return s.length>16 ? s.slice(0,15)+'…' : s; }
+
+function dmini(v,pv){
+  if(typeof v!=='number') return '';
+  if(typeof pv!=='number') return '<span class="dmini new" title="новое в этом месяце">NEW</span>';
+  if(pv===0) return v>0 ? '<span class="dmini up">▲</span>' : '';
+  var dp=(v-pv)/Math.abs(pv);
+  if(Math.abs(dp)<0.005) return '<span class="dmini flat">→</span>';
+  var cls=dp>0?'up':'down';
+  return '<span class="dmini '+cls+'">'+(dp>0?'▲':'▼')+Math.abs(Math.round(dp*100))+'%</span>';
+}
+function col2(){
+  var g=D.geos.filter(function(x){ return x.id===STATE.geo; })[0];
+  return (g && typeof g.col2==='string') ? g.col2 : 'Клики';
+}
+function promoBlock(){
+  var ids=D.months.map(function(m){return m.id;});
+  var cutoff=ids.indexOf(STATE.month);
+  var win=ids.slice(0, cutoff<0?ids.length:cutoff+1).slice(-3);
+  var geo=D.data[STATE.geo]||{};
+  var byMonth={};
+  win.forEach(function(mid){
+    var map={};
+    ((geo[mid]||{}).promos||[]).forEach(function(p,idx){ map[p.name]=({p:p,idx:idx}); });
+    byMonth[mid]=map;
+  });
+  var names=[], seen={};
+  win.slice().reverse().forEach(function(mid){
+    Object.keys(byMonth[mid]).forEach(function(n){ if(!seen[n]){ seen[n]=1; names.push(n); } });
+  });
+  var cm=win[win.length-1];
+  var prevM = win.length>1 ? win[win.length-2] : null;
+  var curVal=function(n){
+    var e=byMonth[cm][n];
+    if(!e) return -1;                      // промо не было в текущем месяце — в самый низ
+    var v=num(e.p.users);
+    return (typeof v==='number')?v:-1;
+  };
+  var maxVal=function(n){
+    var mx=-1;
+    win.forEach(function(mid){
+      var e=byMonth[mid][n];
+      var v=e?num(e.p.users):null;
+      if(typeof v==='number'&&v>mx) mx=v;
+    });
+    return mx;
+  };
+  names.sort(function(a,b){
+    var d=curVal(b)-curVal(a);
+    if(d) return d;
+    d=maxVal(b)-maxVal(a);
+    if(d) return d;
+    return a.localeCompare(b,'ru');
+  });
+
+  var isCur=function(k){ return k===win.length-1; };
+  var c1=function(k){ return 'mgrp mhead'+(isCur(k)?' mcur':''); };
+  var c2=function(k){ return 'num mgrp'+(isCur(k)?' mcur':''); };
+  var c3=function(k){ return 'num'+(isCur(k)?' mcur':''); };
+  var two=!!col2();
+  var head1='<tr><th rowspan="2">Промо</th><th rowspan="2">Тип</th><th rowspan="2">Вертикаль</th>'+
+    win.map(function(mid,k){
+      return '<th class="'+c1(k)+'" colspan="'+(two?2:1)+'">'+esc(monthLabel(mid))+'</th>';
+    }).join('')+'<th rowspan="2"></th></tr>';
+  var head2='<tr>'+win.map(function(mid,k){
+      return '<th class="'+c2(k)+'">Участ.</th>'+(two?'<th class="'+c3(k)+'">'+esc(col2())+'</th>':'');
+    }).join('')+'</tr>';
+
+  var tot={};
+  win.forEach(function(mid){ tot[mid]={u:0,o:0}; });
+  var body=names.map(function(n){
+    var meta=null, metaMid=null;
+    win.slice().reverse().forEach(function(mid){ if(!meta&&byMonth[mid][n]){ meta=byMonth[mid][n]; metaMid=mid; } });
+    var mb='data.'+STATE.geo+'.'+metaMid+'.promos.'+meta.idx;
+    var prevMid = win.length>1 ? win[win.length-2] : null;
+    var cells=win.map(function(mid,k){
+      var e=byMonth[mid][n];
+      if(!e) return '<td class="'+c2(k)+'" style="color:var(--ink-faint)">—</td>'+
+                    (two?'<td class="'+c3(k)+'" style="color:var(--ink-faint)">—</td>':'');
+      tot[mid].u+=num(e.p.users)||0; tot[mid].o+=num(e.p.ops)||0;
+      var pb='data.'+STATE.geo+'.'+mid+'.promos.'+e.idx;
+      var du='', doo='';
+      if(isCur(k)&&prevMid){
+        var pe=byMonth[prevMid][n];
+        du = dmini(num(e.p.users), pe?num(pe.p.users):null);
+        doo= dmini(num(e.p.ops),   pe?num(pe.p.ops):null);
+      }
+      return '<td class="'+c2(k)+'">'+ed(pb+'.users',e.p.users,'')+du+'</td>'+
+             (two?'<td class="'+c3(k)+'">'+ed(pb+'.ops',e.p.ops,'')+doo+'</td>':'');
+    }).join('');
+    var inCur=!!byMonth[cm][n];
+    return '<tr><td class="name">'+ed(mb+'.name',meta.p.name,'text')+'</td>'+
+      '<td>'+ed(mb+'.type',meta.p.type,'text')+'</td>'+
+      '<td>'+ed(mb+'.vertical',meta.p.vertical,'text')+'</td>'+cells+
+      '<td>'+(inCur?'<button class="rowdel" data-del="data.'+STATE.geo+'.'+cm+'.promos|'+byMonth[cm][n].idx+'">×</button>':'')+'</td></tr>';
+  }).join('');
+
+  var pm = win.length>1 ? win[win.length-2] : null;
+  var foot='<tr><td>Итого</td><td></td><td></td>'+win.map(function(mid,k){
+    var du = (isCur(k)&&pm) ? dmini(tot[mid].u, tot[pm].u) : '';
+    var doo= (isCur(k)&&pm) ? dmini(tot[mid].o, tot[pm].o) : '';
+    return '<td class="'+c2(k)+'">'+fmt(tot[mid].u,'')+du+'</td>'+
+           (two?'<td class="'+c3(k)+'">'+fmt(tot[mid].o,'')+doo+'</td>':'');
+  }).join('')+'<td></td></tr>';
+
+  var top3=names.filter(function(n){ return byMonth[cm][n]; })
+    .slice(0,3).map(function(n,rank){
+      var e=byMonth[cm][n], pe=prevM?byMonth[prevM][n]:null;
+      var dm=dmini(num(e.p.users), pe?num(pe.p.users):null);
+      return '<div class="w"><div class="l">'+(rank+1)+' место · '+esc(e.p.vertical||'—')+'</div>'+
+        '<div class="v" style="font-size:16px;line-height:1.3">'+esc(e.p.name)+'</div>'+
+        '<div class="s" style="font-size:15px;font-weight:700;color:var(--ink);margin-top:6px">'+
+          fmt(num(e.p.users),'')+' участников '+dm+'</div></div>';
+    }).join('');
+  var head = top3 ? '<div class="sec-head" style="margin-top:18px"><h2 style="font-size:16px">ТОП-3 промо · '+
+      esc(monthLabel(cm))+'</h2></div><div class="work" style="margin-bottom:15px">'+top3+'</div>' : '';
+
+  return head+'<div class="card full"><h3>Промо-акции</h3>'+
+    '<div style="font-size:12px;color:var(--ink-faint);margin:-6px 0 10px">Три месяца подряд, чтобы видеть движение. Сортировка — по участникам текущего месяца</div>'+
+    '<div class="t-wrap"><table><thead>'+head1+head2+'</thead>'+
+    '<tbody>'+(body||'<tr><td colspan="'+(4+win.length*(two?2:1))+'" class="empty">Нет промо за период</td></tr>')+'</tbody>'+
+    '<tfoot>'+foot+'</tfoot></table></div>'+
+    '<button class="btn addrow" data-add="promo">+ Добавить промо в '+esc(monthLabel(cm))+'</button></div>';
+}
+
+function secTourn(){
+  if(!D.tournaments) D.tournaments={};
+  if(!D.tournaments[STATE.geo]) D.tournaments[STATE.geo]=[];
+  var rows=D.tournaments[STATE.geo], b='tournaments.'+STATE.geo;
+  var ids=D.months.map(function(m){return m.id;});
+  var cut=ids.indexOf(STATE.month);
+  var win=ids.slice(0, cut<0?ids.length:cut+1).slice(-2);
+  var isCur=function(k){ return k===win.length-1; };
+  var c1=function(k){ return 'mgrp mhead'+(isCur(k)?' mcur':''); };
+  var c2=function(k){ return 'num mgrp'+(isCur(k)?' mcur':''); };
+  var c3=function(k){ return 'num'+(isCur(k)?' mcur':''); };
+  var prevMid = win.length>1 ? win[win.length-2] : null;
+
+  var html='<div class="sec-head"><h2>Казино</h2><div class="hint">Список турниров по гео. Участники — по месяцам, чтобы видеть, как идёт активность</div></div>';
+  html+='<div class="card full"><div class="t-wrap"><table><thead>'+
+    '<tr><th rowspan="2">Турнир / активность</th><th rowspan="2">Период</th>'+
+      win.map(function(mid,k){ return '<th class="'+c1(k)+'" colspan="2">'+esc(monthLabel(mid))+'</th>'; }).join('')+
+      '<th rowspan="2"></th></tr>'+
+    '<tr>'+win.map(function(mid,k){
+      return '<th class="'+c2(k)+'">Участ.</th><th class="'+c3(k)+'">Использ.</th>';
+    }).join('')+'</tr>'+
+    '</thead><tbody>'+
+    (rows.map(function(t,i){
+      var tb=b+'.'+i;
+      var pbm=t.playersByMonth||{};
+      var game=(t.game||STATE.editing)
+        ? '<div style="font-size:12px;color:var(--ink-faint);margin-top:2px">'+ed(tb+'.game',t.game,'text')+'</div>' : '';
+      var ubm=t.usesByMonth||{};
+      var cells=win.map(function(mid,k){
+        var v=pbm[mid], u=ubm[mid], dm='', du='';
+        if(isCur(k)&&prevMid){
+          if(typeof v==='number') dm=dmini(v, typeof pbm[prevMid]==='number'?pbm[prevMid]:null);
+          if(typeof u==='number') du=dmini(u, typeof ubm[prevMid]==='number'?ubm[prevMid]:null);
+        }
+        var uCell = ed(tb+'.usesByMonth.'+mid,(typeof u==='number'?u:null),'')+du;
+        return '<td class="'+c2(k)+'">'+ed(tb+'.playersByMonth.'+mid,(typeof v==='number'?v:null),'')+dm+'</td>'+
+               '<td class="'+c3(k)+'">'+uCell+'</td>';
+      }).join('');
+      return '<tr><td class="name">'+ed(tb+'.name',t.name,'text')+game+'</td>'+
+        '<td>'+ed(tb+'.period',t.period,'text')+'</td>'+cells+
+        '<td><button class="rowdel" data-del="'+b+'|'+i+'">×</button></td></tr>';
+    }).join('') || '<tr><td colspan="'+(3+win.length*2)+'" class="empty">Турниров пока нет</td></tr>')+
+    '</tbody></table></div><button class="btn addrow" data-add="tourn">+ Добавить турнир</button></div>';
+  return html;
+}
+
+function secAgents(){
+  var c=cur(); if(!c) return emptyMonth();
+  var b=base(), sends=c.agentSends||[], tests=c.agentTests||[], agents=c.agents||[];
+
+  var html='<div class="sec-head"><h2>Агентские рассылки</h2><div class="hint">Конверсии и средний FTD считаются автоматически</div></div>';
+
+  // --- рассылки на лендинг агентов ---
+  html+='<div class="card full"><h3>Рассылки на лендинг агентов</h3><div class="t-wrap"><table>'+
+    '<thead><tr><th>Дата</th><th class="num">Отправлено</th><th class="num">Доставлено</th>'+
+    '<th class="num">Перешли</th><th class="num">Ожид. CR</th><th class="num">Факт. CR</th>'+
+    '<th class="num">Регистраций</th><th class="num">Переход → рег</th><th>Ссылка</th><th>Комментарий</th><th></th></tr></thead><tbody>'+
+    (sends.map(function(x,i){
+      var sb=b+'.agentSends.'+i;
+      var c2 = (num(x.clicks)>0) ? (num(x.regs)||0)/num(x.clicks) : null;
+      var lnk = x.link ? '<a href="'+esc(x.link)+'" target="_blank" rel="noopener">'+esc(String(x.link).replace(/^https?:\/\//,''))+'</a>' : '—';
+      return '<tr><td class="name">'+ed(sb+'.date',x.date,'text')+'</td>'+
+        '<td class="num">'+ed(sb+'.sent',x.sent,'')+'</td>'+
+        '<td class="num">'+ed(sb+'.delivered',x.delivered,'')+'</td>'+
+        '<td class="num">'+ed(sb+'.clicks',x.clicks,'')+'</td>'+
+        '<td class="num">'+ed(sb+'.crExpected',x.crExpected,'text')+'</td>'+
+        '<td class="num">'+ed(sb+'.crActual',x.crActual,'%')+'</td>'+
+        '<td class="num">'+ed(sb+'.regs',x.regs,'')+'</td>'+
+        '<td class="num">'+(c2==null?'—':fmt(c2,'%'))+'</td>'+
+        '<td>'+lnk+' <span class="only-edit">'+ed(sb+'.link',x.link,'text')+'</span></td>'+
+        '<td>'+ed(sb+'.note',x.note,'text')+'</td>'+
+        '<td><button class="rowdel" data-del="'+b+'.agentSends|'+i+'">×</button></td></tr>';
+    }).join('') || '<tr><td colspan="11" class="empty">Рассылок за месяц нет</td></tr>')+
+    '</tbody></table></div><button class="btn addrow" data-add="agentsend">+ Добавить рассылку</button></div>';
+
+  // --- A/B тест офферов по каналам ---
+  if(tests.length||STATE.editing){
+    html+='<div class="sec-head" style="margin-top:26px"><h2>A/B тест офферов по каналам</h2>'+
+      '<div class="hint">Click Rate по каждому каналу и итог по офферу</div></div>';
+    html+='<div class="stack">'+tests.map(function(t,i){
+      var tb=b+'.agentTests.'+i;
+      var chs=t.channels||[];
+      var c1 = (num(t.clicks)>0) ? (num(t.regs)||0)/num(t.clicks) : null;
+      var c2 = (num(t.regs)>0) ? (num(t.ftd)||0)/num(t.regs) : null;
+      var avg = (num(t.ftd)>0) ? (num(t.ftdSum)||0)/num(t.ftd) : null;
+      var lnk = t.link ? '<a href="'+esc(t.link)+'" target="_blank" rel="noopener">ссылка</a>' : '';
+      return '<div class="card full"><h3>'+ed(tb+'.name',t.name,'text')+' · '+ed(tb+'.date',t.date,'text')+
+        (lnk?' <span style="font-weight:400;font-size:12.5px">'+lnk+'</span>':'')+
+        ' <button class="rowdel" data-del="'+b+'.agentTests|'+i+'">×</button></h3>'+
+        '<div class="t-wrap"><table><thead><tr><th>Канал</th><th class="num">Доставлено</th><th class="num">Click Rate</th><th></th></tr></thead><tbody>'+
+        chs.map(function(ch,j){
+          var cb=tb+'.channels.'+j;
+          return '<tr><td class="name">'+ed(cb+'.name',ch.name,'text')+'</td>'+
+            '<td class="num">'+ed(cb+'.delivered',ch.delivered,'')+'</td>'+
+            '<td class="num">'+ed(cb+'.cr',ch.cr,'%')+'</td>'+
+            '<td><button class="rowdel" data-del="'+tb+'.channels|'+j+'">×</button></td></tr>';
+        }).join('')+'</tbody></table></div>'+
+        '<button class="btn addrow" data-add="testchannel:'+i+'">+ Канал</button>'+
+        (chs.length?'<div style="margin-top:12px">'+hbars(chs.map(function(ch){
+          return {name:ch.name, value: typeof ch.cr==='number' ? Math.round(ch.cr*10000)/100 : 0};
+        }),'var(--accent)')+'<div style="font-size:12px;color:var(--ink-faint)">Click Rate, %</div></div>':'')+
+        '<div class="kpis" style="margin-top:14px;margin-bottom:0">'+
+          '<div class="kpi"><div class="l">Переходов</div><div class="v">'+ed(tb+'.clicks',t.clicks,'')+'</div></div>'+
+          '<div class="kpi"><div class="l">Регистраций</div><div class="v">'+ed(tb+'.regs',t.regs,'')+'</div></div>'+
+          '<div class="kpi"><div class="l">FTD</div><div class="v">'+ed(tb+'.ftd',t.ftd,'')+'</div></div>'+
+          '<div class="kpi"><div class="l">Сумма депозитов</div><div class="v">'+ed(tb+'.ftdSum',t.ftdSum,'$')+'</div></div>'+
+          '<div class="kpi"><div class="l">Переход → рег</div><div class="v">'+(c1==null?'—':fmt(c1,'%'))+'</div></div>'+
+          '<div class="kpi"><div class="l">Рег → FTD</div><div class="v">'+(c2==null?'—':fmt(c2,'%'))+'</div></div>'+
+          '<div class="kpi"><div class="l">Средний FTD</div><div class="v">'+(avg==null?'—':fmt(Math.round(avg*100)/100,'$'))+'</div></div>'+
+        '</div>'+
+        '<div style="margin-top:12px;font-size:13px;color:var(--ink-soft)">'+ed(tb+'.note',t.note,'text')+'</div>'+
+      '</div>';
+    }).join('')+'</div>';
+    html+='<button class="btn addrow" data-add="agenttest" style="margin-top:12px">+ Добавить оффер</button>';
+  }
+
+  if(agents.length){
+    html+='<div class="sec-head" style="margin-top:26px"><h2>Прочие агентские рассылки</h2></div>';
+    html+='<div class="card full"><div class="t-wrap"><table>'+
+      '<thead><tr><th>Рассылка</th><th class="num">Переходов</th><th class="num">Регистраций</th>'+
+      '<th class="num">FTD</th><th class="num">Сумма FTD</th><th>Вывод</th><th></th></tr></thead><tbody>'+
+      agents.map(function(a,i){
+        var ab=b+'.agents.'+i;
+        return '<tr><td class="name">'+ed(ab+'.name',a.name,'text')+'</td>'+
+          '<td class="num">'+ed(ab+'.clicks',a.clicks,'')+'</td>'+
+          '<td class="num">'+ed(ab+'.regs',a.regs,'')+'</td>'+
+          '<td class="num">'+ed(ab+'.ftd',a.ftd,'')+'</td>'+
+          '<td class="num">'+ed(ab+'.ftdSum',a.ftdSum,'$')+'</td>'+
+          '<td>'+ed(ab+'.note',a.note,'text')+'</td>'+
+          '<td><button class="rowdel" data-del="'+b+'.agents|'+i+'">×</button></td></tr>';
+      }).join('')+'</tbody></table></div></div>';
+  }
+  return html;
+}
+
+function emptyMonth(){
+  return '<div class="card"><div class="empty">За '+esc(monthLabel(STATE.month))+' по гео «'+esc(geoName(STATE.geo))+'» данных нет.<br>'+
+    'Включите режим правки и нажмите «⋯ → Добавить месяц», либо пришлите цифры — соберу.</div></div>';
+}
+
+/* ---------- shell ---------- */
+function visibleTabs(){
+  return TABS.filter(function(t){ return !t.geos || t.geos.indexOf(STATE.geo)>=0; });
+}
+function renderShell(){
+  document.body.className = 'geo-'+STATE.geo + (STATE.editing?' editing':'');
+  document.getElementById('eyebrow').textContent = D.meta.eyebrow||'Brand Performance';
+  document.getElementById('ttl').textContent = D.meta.title||'Дашборд';
+  document.getElementById('geoSeg').innerHTML = D.geos.map(function(g){
+    return '<button data-geo="'+esc(g.id)+'" class="'+(g.id===STATE.geo?'on':'')+'">'+esc(g.name)+'</button>';
+  }).join('');
+  var mseg=document.getElementById('monthSeg');
+  mseg.innerHTML = D.months.map(function(m){
+    return '<button data-month="'+esc(m.id)+'" title="'+esc(m.label)+'" class="'+(m.id===STATE.month?'on':'')+'">'+esc(monthShort(m.id))+'</button>';
+  }).join('');
+  var onBtn=mseg.querySelector('button.on');
+  if(onBtn && onBtn.scrollIntoView) onBtn.scrollIntoView({block:'nearest', inline:'nearest'});
+  document.getElementById('tabs').innerHTML = visibleTabs().map(function(t){
+    return '<button data-tab="'+t.id+'" class="'+(t.id===STATE.tab?'on':'')+'">'+esc(t.name)+'</button>';
+  }).join('');
+  document.getElementById('editBtn').className = 'btn'+(STATE.editing?' on':'');
+  document.getElementById('editBtn').textContent = STATE.editing ? '✓ Готово' : '✎ Редактировать';
+  document.getElementById('saveBtn').style.display = (STATE.editing||DIRTY) ? '' : 'none';
+  var f=document.getElementById('foot');
+  f.innerHTML = 'Обновлено: '+esc(D.meta.updated||'')+' · '+esc(geoName(STATE.geo))+' · '+esc(monthLabel(STATE.month));
+}
+function render(){
+  if(!D) return;
+  if(!visibleTabs().some(function(t){ return t.id===STATE.tab; })) STATE.tab='totals';
+  renderShell();
+  var app=document.getElementById('app'), html='';
+  if(STATE.tab==='totals') html=secTotals();
+  else if(STATE.tab==='tourn') html=secTourn();
+  else if(STATE.tab==='agents') html=secAgents();
+  if(D.meta.demo) html+='<div class="demo"><b>Это демо-данные.</b> Цифры и тексты вымышленные — они здесь, чтобы было видно, как дашборд выглядит заполненным. Замените своими (кнопка «✎ Редактировать») или пришлите цифры в чат.</div>';
+  app.innerHTML=html;
+  if(STATE.editing) enableEdit();
+}
+function enableEdit(){
+  var nodes=document.querySelectorAll('#app [data-path]');
+  for(var i=0;i<nodes.length;i++){
+    nodes[i].setAttribute('contenteditable','true');
+    nodes[i].setAttribute('spellcheck','false');
+  }
+}
+
+/* ---------- events ---------- */
+document.body.addEventListener('click', function(e){
+  var g=e.target.closest('[data-geo]');
+  if(g){ STATE.geo=g.getAttribute('data-geo'); render(); window.scrollTo(0,0); return; }
+  var t=e.target.closest('[data-tab]');
+  if(t){ STATE.tab=t.getAttribute('data-tab'); render(); window.scrollTo(0,0); return; }
+  var mo=e.target.closest('[data-month]');
+  if(mo){ STATE.month=mo.getAttribute('data-month'); render(); window.scrollTo(0,0); return; }
+  var d=e.target.closest('[data-del]');
+  if(d){
+    var pr=d.getAttribute('data-del').split('|');
+    var arr=getPath(pr[0]);
+    if(arr&&arr.splice){ arr.splice(parseInt(pr[1],10),1); markDirty(); render(); }
+    return;
+  }
+  var a=e.target.closest('[data-add]');
+  if(a){ addItem(a.getAttribute('data-add')); return; }
+});
+document.getElementById('editBtn').addEventListener('click', function(){
+  if(STATE.editing){ STATE.editing=false; flushSave(); render(); return; }
+  ensureAuth(function(){ STATE.editing=true; render(); });
+});
+document.getElementById('saveBtn').addEventListener('click', function(){ flushSave(); });
+document.getElementById('moreBtn').addEventListener('click', more);
+document.getElementById('importBtn').addEventListener('click', function(){
+  ensureAuth(function(){ document.getElementById('importFile').click(); });
+});
+document.getElementById('importFile').addEventListener('change', function(e){
+  var f=e.target.files && e.target.files[0];
+  e.target.value='';
+  if(!f) return;
+  var rd=new FileReader();
+  rd.onload=function(){ importPreview(rd.result); };
+  rd.onerror=function(){ alert('Не удалось прочитать файл.'); };
+  rd.readAsText(f,'utf-8');
+});
+
+document.getElementById('app').addEventListener('blur', function(e){
+  var el=e.target;
+  if(!el.getAttribute||!el.getAttribute('data-path')) return;
+  var path=el.getAttribute('data-path'), type=el.getAttribute('data-type');
+  var raw=el.textContent.trim();
+  if(type==='num'){ setPath(path, parseNum(raw)); }
+  else if(type==='pct'){
+    var n=parseNum(raw);
+    setPath(path, n==null?null:(raw.indexOf('%')>=0||n>1 ? n/100 : n));
+  }
+  else setPath(path, raw);
+  markDirty();
+  render();
+}, true);
+
+function ensureMonth(){
+  if(!D.data[STATE.geo]) D.data[STATE.geo]={};
+  if(!D.data[STATE.geo][STATE.month]){
+    D.data[STATE.geo][STATE.month]={totals:{},promos:[],tournaments:[]/*вход для импорта, не для ручной правки*/,
+      vip:{title:'ВИП рассылки',segments:[],notes:[]},agents:[],agentSends:[],agentTests:[],channels:[],topSport:[],topCasino:[],reactivation:[],
+      retention:{metrics:[],better:[],worse:[],hypotheses:[]},projects:[],plans:[]};
+  }
+  var c=D.data[STATE.geo][STATE.month];
+  if(!c.vip) c.vip={title:'ВИП рассылки',segments:[],notes:[]};
+  if(!c.vip.segments) c.vip.segments=[];
+  if(!c.vip.notes) c.vip.notes=[];
+  if(!c.agents) c.agents=[];
+  if(!c.channels) c.channels=[];
+  if(!c.topSport) c.topSport=[];
+  if(!c.topCasino) c.topCasino=[];
+  if(!c.reactivation) c.reactivation=[];
+  if(!c.agentSends) c.agentSends=[];
+  if(!c.agentTests) c.agentTests=[];
+  if(!c.retention) c.retention={metrics:[],better:[],worse:[],hypotheses:[]};
+  ['promos','tournaments','projects','plans'].forEach(function(k){ if(!c[k]) c[k]=[]; });
+  ['metrics','better','worse','hypotheses','channels'].forEach(function(k){ if(!c.retention[k]) c.retention[k]=[]; });
+  return c;
+}
+function addItem(kind){
+  var c=ensureMonth();
+  if(kind==='promo') c.promos.push({name:'Новое промо',period:'',spend:0,revenue:0,users:0,ops:0,newUsers:0,note:''});
+  else if(kind==='tourn'){
+    if(!D.tournaments) D.tournaments={};
+    if(!D.tournaments[STATE.geo]) D.tournaments[STATE.geo]=[];
+    D.tournaments[STATE.geo].push({name:'Новый турнир',game:'',period:'',playersByMonth:{},usesByMonth:{}});
+  }
+  else if(kind==='better') c.retention.better.push('Что улучшилось');
+  else if(kind==='worse') c.retention.worse.push('Что ухудшилось');
+  else if(kind==='hyp') c.retention.hypotheses.push({found:'Что обнаружили',actions:['Действие'],got:'Что получили',next:'Следующая гипотеза',status:'В работе'});
+  else if(kind.indexOf('action:')===0){
+    var idx=parseInt(kind.split(':')[1],10);
+    if(c.retention.hypotheses[idx]){
+      if(!c.retention.hypotheses[idx].actions) c.retention.hypotheses[idx].actions=[];
+      c.retention.hypotheses[idx].actions.push('Действие');
+    }
+  }
+  else if(kind==='proj') c.projects.push({title:'Новый проект',why:'',expected:'',result:'',change:'',status:'В работе'});
+  else if(kind==='plan') c.plans.push({title:'Новая инициатива',why:'',expected:'',status:'План'});
+  else if(kind==='vipseg') c.vip.segments.push({name:'Новый сегмент',issued:0,used:0});
+  else if(kind==='vipnote') c.vip.notes.push('Что менять');
+  else if(kind==='channel') c.channels.push({channel:'Канал',metric:'Click Rate',value:null,delta:null});
+  else if(kind==='topSport') c.topSport.push({name:'',channel:'',sent:null,cr:null,clicks:null,pm:null,push:null,emailOR:null,emailCR:null});
+  else if(kind==='topCasino') c.topCasino.push({name:'',channel:'',sent:null,cr:null,clicks:null,pm:null,push:null,emailOR:null,emailCR:null});
+  else if(kind==='reactivation') c.reactivation.push({vertical:'',segment:'10+',inactivity:'',base:null,activated:null,ctr:null,arppu:null,profit:null});
+  else if(kind==='agent') c.agents.push({name:'Новая рассылка',clicks:0,regs:0,ftd:0,ftdSum:0,note:''});
+  else if(kind==='agentsend') c.agentSends.push({date:'',sent:null,delivered:null,clicks:null,crExpected:'',crActual:null,link:'',regs:null,note:''});
+  else if(kind==='agenttest') c.agentTests.push({name:'Новый оффер',date:'',link:'',channels:[{name:'PM',delivered:null,cr:null}],clicks:null,regs:null,ftd:null,ftdSum:null,note:''});
+  else if(kind.indexOf('testchannel:')===0){
+    var ti=parseInt(kind.split(':')[1],10);
+    if(c.agentTests[ti]){ if(!c.agentTests[ti].channels) c.agentTests[ti].channels=[];
+      c.agentTests[ti].channels.push({name:'Канал',delivered:null,cr:null}); }
+  }
+  STATE.editing=true; markDirty(); render();
+}
+
+function more(){
+  var choice=prompt(
+    'Что сделать?\n'+
+    '1 — добавить новый месяц\n'+
+    '2 — скачать данные в JSON (чтобы прислать в чат)\n'+
+    '3 — загрузить данные из JSON\n'+
+    '4 — убрать пометку «демо-данные»\n'+
+    '5 — откатиться к предыдущей версии\n\n'+
+    'Введите цифру:');
+  if(choice==='1'){
+    ensureAuth(function(){ addMonthFlow(); });
+  } else if(choice==='2'){
+    dl(JSON.stringify(D,null,2),'brand-dashboard-data.json','application/json');
+  } else if(choice==='3'){
+    ensureAuth(function(){ importFlow(); });
+  } else if(choice==='4'){
+    ensureAuth(function(){ D.meta.demo=false; markDirty(); render(); });
+  } else if(choice==='5'){
+    ensureAuth(function(){ historyFlow(); });
+  }
+}
+
+function addMonthFlow(){
+    var label=prompt('Название месяца, например: Сентябрь 2026');
+    if(!label) return;
+    var id=prompt('Короткий код месяца (для сортировки), например: 2026-08','');
+    if(!id) return;
+    if(!D.months.some(function(m){return m.id===id;})) D.months.push({id:id,label:label});
+    D.months.sort(function(a,b){ return a.id<b.id?-1:1; });
+    D.geos.forEach(function(g){
+      if(!D.data[g.id]) D.data[g.id]={};
+      if(!D.data[g.id][id]) D.data[g.id][id]={totals:{},promos:[],tournaments:[]/*вход для импорта*/,
+        vip:{title:'ВИП рассылки',segments:[],notes:[]},agents:[],agentSends:[],agentTests:[],channels:[],topSport:[],topCasino:[],reactivation:[],
+        retention:{metrics:[],better:[],worse:[],hypotheses:[]},projects:[],plans:[]};
+    });
+    STATE.month=id; STATE.editing=true; markDirty(); render();
+}
+
+function importFlow(){
+    var inp=document.createElement('input'); inp.type='file'; inp.accept='.json,application/json';
+    inp.onchange=function(){
+      var f=inp.files[0]; if(!f) return;
+      var rd=new FileReader();
+      rd.onload=function(){
+        try{
+          var obj=JSON.parse(rd.result);
+          if(!obj.data||!obj.geos||!obj.months) throw new Error('нет полей data / geos / months');
+          D=obj;
+          STATE.geo=D.geos[0].id; STATE.month=D.months[D.months.length-1].id;
+          markDirty(); render();
+        }catch(err){ alert('Файл не подошёл: '+err.message+'. Нужен JSON, выгруженный этим же дашбордом.'); }
+      };
+      rd.readAsText(f,'utf-8');
+    };
+    inp.click();
+}
+
+function dl(text,name,mime){
+  var blob=new Blob([text],{type:mime+';charset=utf-8'});
+  var url=URL.createObjectURL(blob);
+  var a=document.createElement('a'); a.href=url; a.download=name;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  setTimeout(function(){ URL.revokeObjectURL(url); },1000);
+}
+/* ================= авторизация · автосохранение · загрузка ================= */
+
+function two(n){ return n<10?'0'+n:''+n; }
+function clock(iso){
+  var d = iso ? new Date(iso) : new Date();
+  return two(d.getHours())+':'+two(d.getMinutes());
+}
+function msg(text, cls){
+  var el=document.getElementById('saveMsg');
+  if(!el) return;
+  el.className='savemsg'+(cls?' '+cls:'');
+  el.textContent=text||'';
+}
+
+/* --- авторизация: пароль проверяется на сервере, здесь его нет --- */
+function ensureAuth(cb){
+  if(AUTHED){ cb(); return; }
+  var p=prompt('Пароль для редактирования:');
+  if(!p) return;
+  msg('Проверяю пароль…');
+  fetch('/api/login',{
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({password:p}), credentials:'same-origin'
+  }).then(function(r){ return r.json().catch(function(){ return {}; }); })
+    .then(function(j){
+      if(j && j.ok){ AUTHED=true; msg(''); cb(); }
+      else { msg(''); alert('Пароль не подошёл.'); }
+    })
+    .catch(function(){
+      msg('');
+      alert('Не получилось проверить пароль: сервер не отвечает.\nЕсли файл открыт локально (file://), запустите «vercel dev».');
+    });
+}
+
+/* --- автосохранение --- */
+/* Любая правка ставит таймер. Через 1.2 сек тишины данные уходят на сервер.
+   Пока идёт запись, новые правки копятся и уедут следующим заходом. */
+var SAVE_DELAY = 1200;
+
+function markDirty(){
+  DIRTY = true;
+  CHANGE_SEQ++;
+  if(!AUTHED){ msg('Правки не сохранятся: нет доступа', 'err'); return; }
+  if(!STORAGE_OK){ msg('Хранилище недоступно — выгрузите JSON («⋯ → 2»)', 'err'); return; }
+  msg('Изменено…');
+  scheduleSave();
+}
+
+function scheduleSave(){
+  if(SAVE_TIMER) clearTimeout(SAVE_TIMER);
+  SAVE_TIMER = setTimeout(flushSave, SAVE_DELAY);
+}
+
+function flushSave(){
+  if(SAVE_TIMER){ clearTimeout(SAVE_TIMER); SAVE_TIMER=null; }
+  if(!DIRTY || SAVING || !AUTHED || !D) return;
+  SAVING = true;
+  msg('Сохраняю…');
+  var sentAt = CHANGE_SEQ;   /* всё, что напечатают после этой строки, уедет следующим заходом */
+  D.meta.updated = new Date().toISOString().slice(0,10);
+
+  fetch('/api/save',{
+    method:'POST', headers:{'Content-Type':'application/json'},
+    credentials:'same-origin',
+    body:JSON.stringify({ rev:REV, data:D })
+  }).then(function(r){
+    return r.json().catch(function(){ return {error:'сервер ответил '+r.status}; });
+  }).then(function(j){
+    SAVING=false;
+    if(j && j.ok){
+      REV = j.rev; RETRY = 0;
+      if(CHANGE_SEQ === sentAt){
+        DIRTY = false;
+        msg('Сохранено в '+clock(j.savedAt), 'ok');
+      } else {
+        /* пока сохраняли, успели напечатать ещё — отправляем следующую порцию */
+        msg('Сохраняю…');
+        scheduleSave();
+      }
+      return;
+    }
+    if(j && j.relogin){
+      AUTHED=false;
+      msg('Сессия истекла — войдите заново', 'err');
+      alert('Сессия закончилась. Нажмите «✎ Редактировать» и введите пароль ещё раз — правки на экране никуда не делись.');
+      return;
+    }
+    if(j && j.conflict){
+      msg('Конфликт версий', 'err');
+      if(confirm('Данные успели изменить в другом месте.\n\nОК — перезаписать своей версией.\nОтмена — перезагрузить страницу и потерять правки, сделанные здесь.')){
+        forceSave();
+      } else {
+        location.reload();
+      }
+      return;
+    }
+    saveFailed((j&&j.error)||'неизвестная ошибка');
+  }).catch(function(e){
+    SAVING=false;
+    saveFailed(e.message);
+  });
+}
+
+function forceSave(){
+  SAVING=true; msg('Перезаписываю…');
+  fetch('/api/save',{
+    method:'POST', headers:{'Content-Type':'application/json'},
+    credentials:'same-origin',
+    body:JSON.stringify({ data:D, force:true })
+  }).then(function(r){ return r.json(); })
+    .then(function(j){
+      SAVING=false;
+      if(j&&j.ok){ REV=j.rev; DIRTY=false; msg('Сохранено в '+clock(j.savedAt),'ok'); }
+      else saveFailed((j&&j.error)||'не вышло');
+    }).catch(function(e){ SAVING=false; saveFailed(e.message); });
+}
+
+/* Не вышло сохранить — не молчим и пробуем ещё раз: 3с, 6с, 12с, 24с, дальше раз в 30с */
+function saveFailed(reason){
+  RETRY++;
+  var wait = Math.min(30000, 3000*Math.pow(2, RETRY-1));
+  msg('Не сохранилось ('+reason+'). Повтор через '+Math.round(wait/1000)+' с', 'err');
+  if(SAVE_TIMER) clearTimeout(SAVE_TIMER);
+  SAVE_TIMER = setTimeout(flushSave, wait);
+}
+
+/* Закрывают вкладку с несохранённым — дотолкнуть запрос и предупредить */
+window.addEventListener('pagehide', function(){
+  if(DIRTY && AUTHED && D){
+    try{
+      fetch('/api/save',{
+        method:'POST', headers:{'Content-Type':'application/json'},
+        credentials:'same-origin', keepalive:true,
+        body:JSON.stringify({ data:D, force:true })
+      });
+    }catch(e){}
+  }
+});
+document.addEventListener('visibilitychange', function(){
+  if(document.visibilityState==='hidden' && DIRTY) flushSave();
+});
+window.addEventListener('beforeunload', function(e){
+  if(DIRTY){ e.preventDefault(); e.returnValue=''; }
+});
+
+/* --- откат к предыдущей версии --- */
+function historyFlow(){
+  fetch('/api/history',{credentials:'same-origin'})
+    .then(function(r){ return r.json(); })
+    .then(function(j){
+      if(!j||!j.ok){ alert('Не вышло получить историю: '+((j&&j.error)||'')); return; }
+      if(!j.versions.length){ alert('Сохранённых версий пока нет.'); return; }
+      var lines=j.versions.slice(0,15).map(function(v){
+        var d=v.savedAt?new Date(v.savedAt):null;
+        var when=d? (two(d.getDate())+'.'+two(d.getMonth()+1)+' '+two(d.getHours())+':'+two(d.getMinutes())) : '—';
+        return v.i+' — версия '+v.rev+', '+when;
+      }).join('\n');
+      var pick=prompt('К какой версии откатиться?\n(0 — самая свежая из сохранённых)\n\n'+lines+'\n\nВведите номер слева:');
+      if(pick===null||pick==='') return;
+      fetch('/api/history',{
+        method:'POST', headers:{'Content-Type':'application/json'},
+        credentials:'same-origin', body:JSON.stringify({i:parseInt(pick,10)})
+      }).then(function(r){ return r.json(); })
+        .then(function(res){
+          if(res&&res.ok){ D=res.data; REV=res.rev; DIRTY=false; msg('Откатились','ok'); render(); }
+          else alert('Откат не прошёл: '+((res&&res.error)||''));
+        });
+    });
+}
+
+/* ================= модалка (общая) ================= */
+function openModal(title, bodyHtml, footHtml){
+  document.getElementById('modalTitle').textContent=title;
+  document.getElementById('modalBody').innerHTML=bodyHtml;
+  document.getElementById('modalFoot').innerHTML=footHtml||'';
+  document.getElementById('modalOv').classList.add('show');
+}
+function closeModal(){ document.getElementById('modalOv').classList.remove('show'); }
+document.getElementById('modalClose').addEventListener('click', closeModal);
+document.getElementById('modalOv').addEventListener('click', function(e){ if(e.target.id==='modalOv') closeModal(); });
+
+/* ================= импорт месячного артефакта ================= */
+function importPreview(html){
+  openModal('Читаю файл…', '<div class="booting">Секунду…</div>', '');
+  fetch('/api/import/preview',{
+    method:'POST', headers:{'Content-Type':'application/json'},
+    credentials:'same-origin', body:JSON.stringify({html:html})
+  }).then(function(r){ return r.json().catch(function(){ return {error:'сервер ответил '+r.status}; }); })
+    .then(function(res){
+      if(!res || !res.ok){
+        if(res && res.relogin){ AUTHED=false; closeModal(); alert('Сессия истекла, войдите заново и загрузите файл снова.'); return; }
+        openModal('Не получилось разобрать файл',
+          '<div class="modal-warn">'+esc((res&&res.error)||'неизвестная ошибка')+'</div>',
+          '<button class="btn" onclick="closeModal()">Закрыть</button>');
+        return;
+      }
+      renderImportDiff(res.token, res.diff);
+    }).catch(function(e){
+      openModal('Не получилось разобрать файл',
+        '<div class="modal-warn">'+esc(e.message)+'</div>',
+        '<button class="btn" onclick="closeModal()">Закрыть</button>');
+    });
+}
+
+function renderImportDiff(token, diff){
+  var body='';
+  body+='<h4>Месяцы</h4>';
+  body+=diff.months.map(function(m){
+    var f=m.fields||{};
+    var parts=['totals '+f.totals, 'промо '+f.promos, 'турниры '+f.tournaments];
+    if(f.vip) parts.push('vip '+f.vip);
+    if(f.channels) parts.push('каналы '+f.channels);
+    if(f.retention==='заполнено') parts.push('ретеншен ✓');
+    var warn = (m.warnings&&m.warnings.length) ? '<div class="modal-warn">'+esc(m.warnings.join('; '))+'</div>' : '';
+    return '<div class="modal-row"><div>'+esc(m.geo.toUpperCase())+' · '+esc(m.label||m.id)+
+      '<div style="color:var(--ink-faint);font-size:12px">'+esc(parts.join(' · '))+'</div>'+warn+'</div>'+
+      '<span class="tag '+m.action+'">'+(m.action==='new'?'новый месяц':'ПЕРЕЗАПИШЕТ')+'</span></div>';
+  }).join('');
+
+  var tKeys=Object.keys(diff.tournaments||{});
+  if(tKeys.length){
+    body+='<h4>Турниры</h4><ul>'+tKeys.map(function(g){
+      var t=diff.tournaments[g];
+      return '<li>'+esc(g.toUpperCase())+': доливаем цифры в '+t.matched+', новых турниров — '+t.added+'</li>';
+    }).join('')+'</ul>';
+  }
+  if(diff.unknownGeos && diff.unknownGeos.length){
+    body+='<h4>Не понял</h4><div class="modal-warn">Гео "'+esc(diff.unknownGeos.join(', '))+'" нет в дашборде — эти данные пропущены.</div>';
+  }
+  var hasOverwrite = diff.months.some(function(m){ return m.action==='overwrite'; });
+  if(hasOverwrite){
+    body+='<div class="modal-warn" style="margin-top:10px">⚠ Часть месяцев уже есть на сайте — их данные будут заменены присланными.</div>';
+  }
+
+  openModal('Что изменится', body,
+    '<button class="btn" id="importCancel">Отмена</button>'+
+    '<button class="btn primary" id="importConfirm">Подтвердить и залить</button>');
+  document.getElementById('importCancel').onclick=closeModal;
+  document.getElementById('importConfirm').onclick=function(){ importCommit(token); };
+}
+
+function importCommit(token){
+  var btn=document.getElementById('importConfirm');
+  if(btn){ btn.disabled=true; btn.textContent='Заливаю…'; }
+  fetch('/api/import/commit',{
+    method:'POST', headers:{'Content-Type':'application/json'},
+    credentials:'same-origin', body:JSON.stringify({token:token})
+  }).then(function(r){ return r.json().catch(function(){ return {error:'сервер ответил '+r.status}; }); })
+    .then(function(res){
+      if(res && res.ok){
+        closeModal();
+        REV=res.rev; DIRTY=false; msg('Импортировано, сохранено в '+clock(res.savedAt),'ok');
+        reloadData();
+      } else {
+        openModal('Не залилось',
+          '<div class="modal-warn">'+esc((res&&res.error)||'неизвестная ошибка')+'</div>',
+          '<button class="btn" onclick="closeModal()">Закрыть</button>');
+      }
+    }).catch(function(e){
+      openModal('Не залилось', '<div class="modal-warn">'+esc(e.message)+'</div>',
+        '<button class="btn" onclick="closeModal()">Закрыть</button>');
+    });
+}
+
+function reloadData(){
+  fetch('/api/data',{cache:'no-store',credentials:'same-origin'})
+    .then(function(r){ return r.json(); })
+    .then(function(res){
+      D=res.data; REV=res.rev||0;
+      if(D.months && D.months.length) STATE.month=D.months[D.months.length-1].id;
+      render();
+    });
+}
+
+/* ================= старт ================= */
+function boot(){
+  document.getElementById('app').innerHTML='<div class="booting">Загружаю данные…</div>';
+
+  fetch('/api/login',{credentials:'same-origin'})
+    .then(function(r){ return r.json(); })
+    .then(function(j){ AUTHED = !!(j&&j.ok); })
+    .catch(function(){});
+
+  fetch('/api/data',{cache:'no-store',credentials:'same-origin'})
+    .then(function(r){ if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); })
+    .then(function(res){
+      var obj = res && res.data;
+      if(!obj||!obj.data||!obj.geos||!obj.months) throw new Error('в ответе нет полей data / geos / months');
+      D=obj; REV=res.rev||0; STORAGE_OK = res.storage!==false;
+      STATE.geo=D.geos[0].id;
+      STATE.month=D.months[D.months.length-1].id;
+      render();
+      if(!STORAGE_OK){
+        msg('Только чтение: хранилище не подключено','err');
+      } else if(res.savedAt){
+        msg('Последнее сохранение в '+clock(res.savedAt));
+      }
+    })
+    .catch(function(e){
+      document.getElementById('app').innerHTML=
+        '<div class="card"><div class="empty">Не удалось загрузить данные: '+esc(e.message)+
+        '<br><br>Если файл открыт локально двойным кликом — так не заработает, нужен «vercel dev» или рабочая ссылка.</div></div>';
+    });
+}
+
+boot();
+})();
+</script>
+</body>
+</html>

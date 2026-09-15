@@ -1,0 +1,3136 @@
+{
+ "meta": {
+  "eyebrow": "Brand Performance",
+  "title": "Дашборд бренд-менеджера",
+  "owner": "",
+  "updated": "2026-08-14",
+  "demo": false,
+  "tournamentSeq": {
+   "mm": 14,
+   "md": 13
+  }
+ },
+ "months": [
+  {
+   "id": "2026-04",
+   "label": "Апрель 2026"
+  },
+  {
+   "id": "2026-05",
+   "label": "Май 2026"
+  },
+  {
+   "id": "2026-06",
+   "label": "Июнь 2026"
+  },
+  {
+   "id": "2026-07",
+   "label": "Июль 2026"
+  },
+  {
+   "id": "2026-08",
+   "label": "Август 2026"
+  }
+ ],
+ "geos": [
+  {
+   "id": "mm",
+   "name": "Мьянма",
+   "col2": "Клики",
+   "sendMode": "cr"
+  },
+  {
+   "id": "md",
+   "name": "Молдова",
+   "col2": "",
+   "sendMode": "volume"
+  }
+ ],
+ "data": {
+  "mm": {
+   "2026-04": {
+    "totals": {
+     "betsSport": 476457,
+     "betsCasino": 7787099,
+     "usersSport": 7736,
+     "usersCasino": 5472,
+     "bonusCasino": 15,
+     "usersDeposit": null,
+     "depositsTotal": null,
+     "retentionRate": null,
+     "newRegistrations": null,
+     "reactivated": 239
+    },
+    "promos": [
+     {
+      "name": "Thingyan: Кешбэк 20%",
+      "period": "",
+      "spend": null,
+      "revenue": null,
+      "users": 0,
+      "ops": 0,
+      "newUsers": null,
+      "note": "Нулевая активность — проверить запуск/доставку",
+      "type": "Ситуатив",
+      "vertical": "Все",
+      "scope": "Локал"
+     },
+     {
+      "name": "Спонсорство с OG Esports (Dota 2) ID: 21055",
+      "period": "",
+      "spend": null,
+      "revenue": null,
+      "users": 6,
+      "ops": 15,
+      "newUsers": null,
+      "note": "",
+      "type": "Ситуатив",
+      "vertical": "Киберспорт",
+      "scope": "Глобал"
+     },
+     {
+      "name": "MB: 20% Cashback: Myanmar: Wave",
+      "period": "",
+      "spend": null,
+      "revenue": null,
+      "users": 473,
+      "ops": 926,
+      "newUsers": null,
+      "note": "",
+      "type": "Перманент",
+      "vertical": "Все",
+      "scope": "Локал"
+     },
+     {
+      "name": "NBA 2025–2026",
+      "period": "",
+      "spend": null,
+      "revenue": null,
+      "users": 25,
+      "ops": 103,
+      "newUsers": null,
+      "note": "",
+      "type": "Ситуатив",
+      "vertical": "Спорт",
+      "scope": "Глобал"
+     },
+     {
+      "name": "MB: Лига Чемпионов 2025–2026",
+      "period": "",
+      "spend": null,
+      "revenue": null,
+      "users": 98,
+      "ops": 103,
+      "newUsers": null,
+      "note": "",
+      "type": "Ситуатив",
+      "vertical": "Спорт",
+      "scope": "Глобал"
+     },
+     {
+      "name": "ПЕРМАНЕНТ · 2-3-4 deposit bonus",
+      "period": "",
+      "spend": null,
+      "revenue": null,
+      "users": 222,
+      "ops": 222,
+      "newUsers": null,
+      "note": "",
+      "type": "Перманент",
+      "vertical": "Все",
+      "scope": "Глобал"
+     },
+     {
+      "name": "ПЕРМАНЕНТ · Accumulator of the Day",
+      "period": "",
+      "spend": null,
+      "revenue": null,
+      "users": 64,
+      "ops": 114,
+      "newUsers": null,
+      "note": "",
+      "type": "Перманент",
+      "vertical": "Спорт",
+      "scope": "Глобал"
+     },
+     {
+      "name": "ПЕРМАНЕНТ · CASHBACK REWARDS",
+      "period": "",
+      "spend": null,
+      "revenue": null,
+      "users": 170,
+      "ops": 365,
+      "newUsers": null,
+      "note": "",
+      "type": "Перманент",
+      "vertical": "Все",
+      "scope": "Глобал"
+     },
+     {
+      "name": "ПЕРМАНЕНТ · Fast Games Day",
+      "period": "",
+      "spend": null,
+      "revenue": null,
+      "users": 1753,
+      "ops": 3329,
+      "newUsers": null,
+      "note": "",
+      "type": "Перманент",
+      "vertical": "Казино",
+      "scope": "Глобал"
+     },
+     {
+      "name": "ПЕРМАНЕНТ · Royal Monday",
+      "period": "",
+      "spend": null,
+      "revenue": null,
+      "users": 730,
+      "ops": 1124,
+      "newUsers": null,
+      "note": "",
+      "type": "Перманент",
+      "vertical": "Казино",
+      "scope": "Глобал"
+     },
+     {
+      "name": "ПЕРМАНЕНТ · No Risk Bet: Safe Bet",
+      "period": "",
+      "spend": null,
+      "revenue": null,
+      "users": 44,
+      "ops": 49,
+      "newUsers": null,
+      "note": "Строка частично не видна на скрине — проверить",
+      "type": "Перманент",
+      "vertical": "Спорт",
+      "scope": "Глобал"
+     }
+    ],
+    "tournaments": [],
+    "retention": {
+     "metrics": [],
+     "better": [],
+     "worse": [],
+     "hypotheses": [],
+     "channels": [],
+     "focus": "",
+     "summary": "",
+     "funnel": [],
+     "newSegments": []
+    },
+    "projects": [],
+    "plans": [],
+    "vip": {
+     "title": "ВИП рассылки",
+     "segments": [],
+     "notes": []
+    },
+    "agents": [],
+    "agentSends": [],
+    "agentTests": [],
+    "channels": [],
+    "topSport": [],
+    "topCasino": [],
+    "reactivation": [
+     {
+      "vertical": "Casino",
+      "segment": "10+",
+      "inactivity": "30–180",
+      "base": 2496,
+      "activated": 131,
+      "ctr": 0.0525,
+      "arppu": 12.0,
+      "profit": 528
+     },
+     {
+      "vertical": "Sport",
+      "segment": "10+",
+      "inactivity": "30–180",
+      "base": 1758,
+      "activated": 108,
+      "ctr": 0.0614,
+      "arppu": 0.1,
+      "profit": 6
+     }
+    ]
+   },
+   "2026-05": {
+    "totals": {
+     "betsSport": 492875,
+     "betsCasino": 8156476,
+     "usersSport": 7874,
+     "usersCasino": 4756,
+     "bonusCasino": 13,
+     "usersDeposit": null,
+     "depositsTotal": null,
+     "retentionRate": 0.7739,
+     "newRegistrations": null,
+     "reactivated": 222
+    },
+    "promos": [
+     {
+      "name": "Спонсорство с OG Esports (Dota 2) ID: 21055",
+      "period": "",
+      "spend": null,
+      "revenue": null,
+      "users": 9,
+      "ops": 34,
+      "newUsers": null,
+      "note": "",
+      "type": "Ситуатив",
+      "vertical": "Киберспорт",
+      "scope": "Глобал"
+     },
+     {
+      "name": "MB: 20% Cashback: Myanmar: Wave",
+      "period": "",
+      "spend": null,
+      "revenue": null,
+      "users": 524,
+      "ops": 898,
+      "newUsers": null,
+      "note": "",
+      "type": "Перманент",
+      "vertical": "Все",
+      "scope": "Локал"
+     },
+     {
+      "name": "NBA 2025–2026",
+      "period": "",
+      "spend": null,
+      "revenue": null,
+      "users": 22,
+      "ops": 41,
+      "newUsers": null,
+      "note": "",
+      "type": "Ситуатив",
+      "vertical": "Спорт",
+      "scope": "Глобал"
+     },
+     {
+      "name": "MB: Лига Чемпионов 2025–2026",
+      "period": "",
+      "spend": null,
+      "revenue": null,
+      "users": 180,
+      "ops": 209,
+      "newUsers": null,
+      "note": "",
+      "type": "Ситуатив",
+      "vertical": "Спорт",
+      "scope": "Глобал"
+     },
+     {
+      "name": "ПЕРМАНЕНТ · 2-3-4 deposit bonus",
+      "period": "",
+      "spend": null,
+      "revenue": null,
+      "users": 254,
+      "ops": 254,
+      "newUsers": null,
+      "note": "",
+      "type": "Перманент",
+      "vertical": "Все",
+      "scope": "Глобал"
+     },
+     {
+      "name": "ПЕРМАНЕНТ · Accumulator of the Day",
+      "period": "",
+      "spend": null,
+      "revenue": null,
+      "users": 63,
+      "ops": 181,
+      "newUsers": null,
+      "note": "",
+      "type": "Перманент",
+      "vertical": "Спорт",
+      "scope": "Глобал"
+     },
+     {
+      "name": "ПЕРМАНЕНТ · CASHBACK REWARDS",
+      "period": "",
+      "spend": null,
+      "revenue": null,
+      "users": 161,
+      "ops": 335,
+      "newUsers": null,
+      "note": "",
+      "type": "Перманент",
+      "vertical": "Все",
+      "scope": "Глобал"
+     },
+     {
+      "name": "ПЕРМАНЕНТ · Fast Games Day",
+      "period": "",
+      "spend": null,
+      "revenue": null,
+      "users": 1670,
+      "ops": 2959,
+      "newUsers": null,
+      "note": "",
+      "type": "Перманент",
+      "vertical": "Казино",
+      "scope": "Глобал"
+     },
+     {
+      "name": "ПЕРМАНЕНТ · Royal Monday",
+      "period": "",
+      "spend": null,
+      "revenue": null,
+      "users": 673,
+      "ops": 1049,
+      "newUsers": null,
+      "note": "",
+      "type": "Перманент",
+      "vertical": "Казино",
+      "scope": "Глобал"
+     },
+     {
+      "name": "ПЕРМАНЕНТ · No Risk Bet: Safe Bet",
+      "period": "",
+      "spend": null,
+      "revenue": null,
+      "users": 116,
+      "ops": 132,
+      "newUsers": null,
+      "note": "",
+      "type": "Перманент",
+      "vertical": "Спорт",
+      "scope": "Глобал"
+     }
+    ],
+    "tournaments": [],
+    "retention": {
+     "metrics": [
+      {
+       "name": "Retention Rate",
+       "value": 0.7739,
+       "unit": "%",
+       "better": "up"
+      }
+     ],
+     "better": [],
+     "worse": [],
+     "hypotheses": [],
+     "channels": [],
+     "focus": "",
+     "summary": "",
+     "funnel": [
+      {
+       "stage": "Reg → 1 деп",
+       "value": 0.412
+      },
+      {
+       "stage": "1 → 2 деп",
+       "value": 0.482
+      },
+      {
+       "stage": "2 → 3 деп",
+       "value": 0.775
+      },
+      {
+       "stage": "3 → 4 деп",
+       "value": 0.82
+      }
+     ],
+     "newSegments": []
+    },
+    "projects": [],
+    "plans": [],
+    "vip": {
+     "title": "ВИП рассылки",
+     "segments": [],
+     "notes": []
+    },
+    "agents": [],
+    "agentSends": [],
+    "agentTests": [],
+    "channels": [],
+    "topSport": [],
+    "topCasino": [],
+    "reactivation": [
+     {
+      "vertical": "Casino",
+      "segment": "10+",
+      "inactivity": "30–180",
+      "base": 1457,
+      "activated": 69,
+      "ctr": 0.0474,
+      "arppu": 12.2,
+      "profit": 263
+     },
+     {
+      "vertical": "Sport",
+      "segment": "10+",
+      "inactivity": "30–180",
+      "base": 1744,
+      "activated": 153,
+      "ctr": 0.0877,
+      "arppu": 0.6,
+      "profit": 34
+     }
+    ]
+   },
+   "2026-06": {
+    "totals": {
+     "betsSport": 444813,
+     "betsCasino": 7869144,
+     "usersSport": 7022,
+     "usersCasino": 5323,
+     "bonusCasino": 19,
+     "usersDeposit": null,
+     "depositsTotal": null,
+     "retentionRate": 0.6875,
+     "newRegistrations": null,
+     "reactivated": null
+    },
+    "promos": [
+     {
+      "name": "MelBet: FIFA World Cup 2026 (Global)",
+      "period": "",
+      "spend": null,
+      "revenue": null,
+      "users": 210,
+      "ops": 1795,
+      "newUsers": null,
+      "note": "Старт акции",
+      "type": "Ситуатив",
+      "vertical": "Спорт",
+      "scope": "Глобал"
+     },
+     {
+      "name": "Спонсорство с OG Esports (Dota 2) ID: 21055",
+      "period": "",
+      "spend": null,
+      "revenue": null,
+      "users": 7,
+      "ops": 48,
+      "newUsers": null,
+      "note": "",
+      "type": "Ситуатив",
+      "vertical": "Киберспорт",
+      "scope": "Глобал"
+     },
+     {
+      "name": "MB: Grand Slam Tournaments 2026",
+      "period": "",
+      "spend": null,
+      "revenue": null,
+      "users": 6,
+      "ops": 47,
+      "newUsers": null,
+      "note": "",
+      "type": "Ситуатив",
+      "vertical": "Спорт",
+      "scope": "Глобал"
+     },
+     {
+      "name": "MB: 20% Cashback: Myanmar: Wave",
+      "period": "",
+      "spend": null,
+      "revenue": null,
+      "users": 452,
+      "ops": 836,
+      "newUsers": null,
+      "note": "",
+      "type": "Перманент",
+      "vertical": "Все",
+      "scope": "Локал"
+     },
+     {
+      "name": "NBA 2025–2026",
+      "period": "",
+      "spend": null,
+      "revenue": null,
+      "users": 15,
+      "ops": 30,
+      "newUsers": null,
+      "note": "",
+      "type": "Ситуатив",
+      "vertical": "Спорт",
+      "scope": "Глобал"
+     },
+     {
+      "name": "ПЕРМАНЕНТ · 2-3-4 deposit bonus",
+      "period": "",
+      "spend": null,
+      "revenue": null,
+      "users": 418,
+      "ops": 418,
+      "newUsers": null,
+      "note": "",
+      "type": "Перманент",
+      "vertical": "Все",
+      "scope": "Глобал"
+     },
+     {
+      "name": "ПЕРМАНЕНТ · Accumulator of the Day",
+      "period": "",
+      "spend": null,
+      "revenue": null,
+      "users": 54,
+      "ops": 155,
+      "newUsers": null,
+      "note": "",
+      "type": "Перманент",
+      "vertical": "Спорт",
+      "scope": "Глобал"
+     },
+     {
+      "name": "ПЕРМАНЕНТ · CASHBACK REWARDS",
+      "period": "",
+      "spend": null,
+      "revenue": null,
+      "users": 165,
+      "ops": 380,
+      "newUsers": null,
+      "note": "",
+      "type": "Перманент",
+      "vertical": "Все",
+      "scope": "Глобал"
+     },
+     {
+      "name": "ПЕРМАНЕНТ · Fast Games Day",
+      "period": "",
+      "spend": null,
+      "revenue": null,
+      "users": 1574,
+      "ops": 2798,
+      "newUsers": null,
+      "note": "",
+      "type": "Перманент",
+      "vertical": "Казино",
+      "scope": "Глобал"
+     },
+     {
+      "name": "ПЕРМАНЕНТ · Royal Monday",
+      "period": "",
+      "spend": null,
+      "revenue": null,
+      "users": 822,
+      "ops": 1373,
+      "newUsers": null,
+      "note": "",
+      "type": "Перманент",
+      "vertical": "Казино",
+      "scope": "Глобал"
+     },
+     {
+      "name": "ПЕРМАНЕНТ · No Risk Bet: Safe Bet",
+      "period": "",
+      "spend": null,
+      "revenue": null,
+      "users": 45,
+      "ops": 71,
+      "newUsers": null,
+      "note": "",
+      "type": "Перманент",
+      "vertical": "Спорт",
+      "scope": "Глобал"
+     }
+    ],
+    "tournaments": [],
+    "retention": {
+     "metrics": [
+      {
+       "name": "Retention Rate",
+       "value": 0.6875,
+       "unit": "%",
+       "better": "up"
+      }
+     ],
+     "better": [
+      "Reg → 1 деп вырос с 41.2% до 47.1%",
+      "1 → 2 деп вырос с 48.2% до 54.5%"
+     ],
+     "worse": [
+      "Retention Rate упал с 77.39% до 68.75%"
+     ],
+     "hypotheses": [],
+     "channels": [],
+     "focus": "",
+     "summary": "",
+     "funnel": [
+      {
+       "stage": "Reg → 1 деп",
+       "value": 0.471
+      },
+      {
+       "stage": "1 → 2 деп",
+       "value": 0.545
+      },
+      {
+       "stage": "2 → 3 деп",
+       "value": 0.792
+      },
+      {
+       "stage": "3 → 4 деп",
+       "value": 0.808
+      }
+     ],
+     "newSegments": []
+    },
+    "projects": [],
+    "plans": [],
+    "vip": {
+     "title": "ВИП рассылки",
+     "segments": [],
+     "notes": []
+    },
+    "agents": [],
+    "agentSends": [],
+    "agentTests": [],
+    "channels": [],
+    "topSport": [],
+    "topCasino": [],
+    "reactivation": []
+   },
+   "2026-07": {
+    "totals": {
+     "betsSport": 543301,
+     "betsCasino": 8446510,
+     "usersSport": 7594,
+     "usersCasino": 5215,
+     "bonusCasino": 8,
+     "usersDeposit": 8546,
+     "depositsTotal": 102912,
+     "retentionRate": 0.7872,
+     "newRegistrations": 5769,
+     "reactivated": null
+    },
+    "promos": [
+     {
+      "name": "MelBet: FIFA World Cup 2026 (Global)",
+      "period": "",
+      "spend": null,
+      "revenue": null,
+      "users": 279,
+      "ops": 1603,
+      "newUsers": null,
+      "note": "Участников +33%, но операций меньше, чем в июне",
+      "type": "Ситуатив",
+      "vertical": "Спорт",
+      "scope": "Глобал"
+     },
+     {
+      "name": "Esports World Cup 2026 (EWC)",
+      "period": "",
+      "spend": null,
+      "revenue": null,
+      "users": 38,
+      "ops": 438,
+      "newUsers": null,
+      "note": "Старт: 38 участников дали 438 операций",
+      "type": "Ситуатив",
+      "vertical": "Киберспорт",
+      "scope": "Глобал"
+     },
+     {
+      "name": "Спонсорство с OG Esports (Dota 2) ID: 21055",
+      "period": "",
+      "spend": null,
+      "revenue": null,
+      "users": 8,
+      "ops": 0,
+      "newUsers": null,
+      "note": "8 участников, 0 операций — проверить учёт",
+      "type": "Ситуатив",
+      "vertical": "Киберспорт",
+      "scope": "Глобал"
+     },
+     {
+      "name": "MB: Grand Slam Tournaments 2026",
+      "period": "",
+      "spend": null,
+      "revenue": null,
+      "users": 5,
+      "ops": 122,
+      "newUsers": null,
+      "note": "",
+      "type": "Ситуатив",
+      "vertical": "Спорт",
+      "scope": "Глобал"
+     },
+     {
+      "name": "MB: 20% Cashback: Myanmar: Wave",
+      "period": "",
+      "spend": null,
+      "revenue": null,
+      "users": 523,
+      "ops": 961,
+      "newUsers": null,
+      "note": "Самая стабильная механика гео",
+      "type": "Перманент",
+      "vertical": "Все",
+      "scope": "Локал"
+     },
+     {
+      "name": "ПЕРМАНЕНТ · 2-3-4 deposit bonus",
+      "period": "",
+      "spend": null,
+      "revenue": null,
+      "users": 521,
+      "ops": 521,
+      "newUsers": null,
+      "note": "",
+      "type": "Перманент",
+      "vertical": "Все",
+      "scope": "Глобал"
+     },
+     {
+      "name": "ПЕРМАНЕНТ · Accumulator of the Day",
+      "period": "",
+      "spend": null,
+      "revenue": null,
+      "users": 38,
+      "ops": 16,
+      "newUsers": null,
+      "note": "",
+      "type": "Перманент",
+      "vertical": "Спорт",
+      "scope": "Глобал"
+     },
+     {
+      "name": "ПЕРМАНЕНТ · CASHBACK REWARDS",
+      "period": "",
+      "spend": null,
+      "revenue": null,
+      "users": 181,
+      "ops": 374,
+      "newUsers": null,
+      "note": "",
+      "type": "Перманент",
+      "vertical": "Все",
+      "scope": "Глобал"
+     },
+     {
+      "name": "ПЕРМАНЕНТ · Fast Games Day",
+      "period": "",
+      "spend": null,
+      "revenue": null,
+      "users": 1952,
+      "ops": 3728,
+      "newUsers": null,
+      "note": "Лидер по объёму: 1 952 участника, 3 728 операций",
+      "type": "Перманент",
+      "vertical": "Казино",
+      "scope": "Глобал"
+     },
+     {
+      "name": "ПЕРМАНЕНТ · Royal Monday",
+      "period": "",
+      "spend": null,
+      "revenue": null,
+      "users": 793,
+      "ops": 1192,
+      "newUsers": null,
+      "note": "",
+      "type": "Перманент",
+      "vertical": "Казино",
+      "scope": "Глобал"
+     },
+     {
+      "name": "ПЕРМАНЕНТ · No Risk Bet: Safe Bet",
+      "period": "",
+      "spend": null,
+      "revenue": null,
+      "users": 208,
+      "ops": 285,
+      "newUsers": null,
+      "note": "",
+      "type": "Перманент",
+      "vertical": "Спорт",
+      "scope": "Глобал"
+     }
+    ],
+    "tournaments": [],
+    "retention": {
+     "metrics": [
+      {
+       "name": "Retention Rate",
+       "value": 0.7872,
+       "unit": "%",
+       "better": "up"
+      },
+      {
+       "name": "Active players Sports",
+       "value": 7594,
+       "unit": "",
+       "better": "up"
+      },
+      {
+       "name": "Active players Casino",
+       "value": 3623,
+       "unit": "",
+       "better": "up"
+      },
+      {
+       "name": "New registrations",
+       "value": 5769,
+       "unit": "",
+       "better": "up"
+      },
+      {
+       "name": "Клиенты с депозитами",
+       "value": 8524,
+       "unit": "",
+       "better": "up"
+      },
+      {
+       "name": "Кампаний за месяц",
+       "value": 153,
+       "unit": "",
+       "better": "up"
+      }
+     ],
+     "better": [
+      "New registrations 5 769 — рост на 37.2%, самый сильный показатель месяца",
+      "Click Rate ЛС вырос до 30.44% (+2.49 п.п.) при росте объёма рассылок на 36%",
+      "Retention Rate вернулся к 78.72% после июньских 68.75%",
+      "Клиентов с депозитами 8 524 (+9.0%)",
+      "Ставки СПОРТ +98 488 к июню — лучший месяц с апреля",
+      "Выдано спорт-бонусов 984 против 583 в июне (+401)"
+     ],
+     "worse": [
+      "Click Rate Push снизился до 1.49%, Open Rate Email — до 4.81%, Click Rate Email — до 0.44%",
+      "Active players Casino: 3 623 в отчёте реактивации против 5 215 в общей статистике — разные определения метрики, нужно свести",
+      "Клиенты с депозитами: 8 524 в отчёте реактивации против 8 546 в B3 Retention Summary — расхождение 22",
+      "Deposit Funnel за июль в B3 Retention Summary не заполнен",
+      "Выдано казино-бонусов 8 — минимум за 4 месяца"
+     ],
+     "hypotheses": [],
+     "base": "Основной сегмент отправок: Email, AppPush, PM — активные юзеры за последние 1–30 дней. Источник: B3_Total report_Asia3-Myanmar_07.2026 (Customer Reactivation Team).",
+     "focus": "Основной упор — отправки по календарю событий и удержание пользователей после завершения Чемпионата мира — 2026. Дополнительно реализованы кросс-отправки киберспортивного и казино-контента на сегмент «спорт».",
+     "channels": [
+      {
+       "channel": "ЛС",
+       "metric": "Click Rate",
+       "value": 0.3044,
+       "delta": 2.49,
+       "note": "Объём вырос с 228.5K до 311.8K писем. За период после ЧМ средний CR 36.55%, диапазон 23.29–42.74%"
+      },
+      {
+       "channel": "Push",
+       "metric": "Click Rate",
+       "value": 0.0149,
+       "delta": -0.04,
+       "note": "Средний уровень 2.06%, диапазон 0.72–3.46%, разовый всплеск 7.62% 23.07"
+      },
+      {
+       "channel": "Email",
+       "metric": "Open Rate",
+       "value": 0.0481,
+       "delta": -0.69,
+       "note": ""
+      },
+      {
+       "channel": "Email",
+       "metric": "Click Rate",
+       "value": 0.0044,
+       "delta": -0.08,
+       "note": ""
+      }
+     ],
+     "summary": "Retention Rate по бренду вырос к июлю (+16.2 п.п.). ЛС не просто сохранил, но и усилил позиции как самый конверсионный канал — CR вырос до 30.44% (+2.49 п.п.) на фоне заметно выросшего объёма рассылок (228.5K → 311.8K). Push и Email показали небольшой откат: CR по Push снизился до 1.49%, Open Rate по Email — до 4.81%. Отдельно по удержанию после ЧМ-2026: после всплеска интереса 21.07 (38.11%) CR в ЛС постепенно снижался до минимума 23.29% к 28.07, а затем резко восстановился до пикового 42.74% 29.07.",
+     "funnel": [
+      {
+       "stage": "Reg → 1 деп",
+       "value": 0.422
+      },
+      {
+       "stage": "1 → 2 деп",
+       "value": 0.513
+      },
+      {
+       "stage": "2 → 3 деп",
+       "value": 0.788
+      },
+      {
+       "stage": "3 → 4 деп",
+       "value": 0.808
+      }
+     ],
+     "newSegments": []
+    },
+    "projects": [],
+    "plans": [],
+    "vip": {
+     "title": "ВИП рассылки — 2 оффера",
+     "segments": [
+      {
+       "name": "5–10k dep",
+       "issued": 231,
+       "used": 39
+      },
+      {
+       "name": "10–100k dep",
+       "issued": 169,
+       "used": 23
+      },
+      {
+       "name": "100k+ dep",
+       "issued": 6,
+       "used": 1
+      }
+     ],
+     "notes": [
+      "Сократить / остановить SMS и PM по этому сценарию (текст на листе обрезан — уточнить)",
+      "Разобраться, почему ФС не используют: либо не хватает напоминания о сгорании (совпадает с находкой по ретеншен-цепочкам — нет reminder о сгорании бонусов), либо условия отыгрыша неочевидны, либо сама сумма предложения неинтересна сегменту",
+      "Проверить гипотезу персонализации: там, где CR высокий, сравнить обычный PM против персонализированного (с именем и суммой депозита)"
+     ]
+    },
+    "agents": [],
+    "agentSends": [
+     {
+      "date": "21/04",
+      "sent": 6309,
+      "delivered": 6307,
+      "clicks": 463,
+      "crExpected": "5–15%",
+      "crActual": 0.073,
+      "link": "https://melbetagents.com",
+      "regs": 15,
+      "note": ""
+     },
+     {
+      "date": "05/05",
+      "sent": 6562,
+      "delivered": 6561,
+      "clicks": 671,
+      "crExpected": "5–15%",
+      "crActual": 0.102,
+      "link": "https://melbetagents.com",
+      "regs": 18,
+      "note": "В среднем 15–18 регистраций, максимум — 30"
+     }
+    ],
+    "agentTests": [
+     {
+      "name": "Offer 1",
+      "date": "27.07.2026",
+      "link": "https://tinyurl.com/2mdkpzjv",
+      "channels": [
+       {
+        "name": "PM",
+        "delivered": 6487,
+        "cr": 0.3509
+       },
+       {
+        "name": "Push",
+        "delivered": 3849,
+        "cr": 0.0301
+       },
+       {
+        "name": "Email",
+        "delivered": 3105,
+        "cr": 0.0064
+       }
+      ],
+      "clicks": null,
+      "regs": 0,
+      "ftd": null,
+      "ftdSum": null,
+      "note": "0 регистраций по ссылке"
+     },
+     {
+      "name": "Offer 2",
+      "date": "03.08.2026",
+      "link": "https://tinyurl.com/2mdkpzjv",
+      "channels": [
+       {
+        "name": "PM",
+        "delivered": 6356,
+        "cr": 0.362
+       },
+       {
+        "name": "Push",
+        "delivered": 3760,
+        "cr": 0.0189
+       },
+       {
+        "name": "Email",
+        "delivered": 3066,
+        "cr": 0.0486
+       }
+      ],
+      "clicks": 37,
+      "regs": 5,
+      "ftd": 4,
+      "ftdSum": 53.21,
+      "note": "Как для «холодной рассылки» — результат рабочий. Продолжаем с другими офферами"
+     }
+    ],
+    "channels": [
+     {
+      "channel": "ЛС",
+      "metric": "Click Rate",
+      "value": 0.3044,
+      "delta": 2.49,
+      "note": "Объём вырос с 228.5K до 311.8K писем. За период после ЧМ средний CR 36.55%, диапазон 23.29–42.74%"
+     },
+     {
+      "channel": "Push",
+      "metric": "Click Rate",
+      "value": 0.0149,
+      "delta": -0.04,
+      "note": "Средний уровень 2.06%, диапазон 0.72–3.46%, разовый всплеск 7.62% 23.07"
+     },
+     {
+      "channel": "Email",
+      "metric": "Open Rate",
+      "value": 0.0481,
+      "delta": -0.69,
+      "note": ""
+     },
+     {
+      "channel": "Email",
+      "metric": "Click Rate",
+      "value": 0.0044,
+      "delta": -0.08,
+      "note": ""
+     }
+    ],
+    "topSport": [],
+    "topCasino": [],
+    "reactivation": []
+   },
+   "2026-08": {
+    "totals": {
+     "betsSport": 585737,
+     "betsCasino": 8439581,
+     "usersSport": 8012,
+     "usersCasino": 5611,
+     "bonusSport": null,
+     "bonusCasino": null,
+     "usersDeposit": 8880,
+     "depositsTotal": 107686,
+     "retentionRate": 0.7254,
+     "newRegistrations": 4571,
+     "reactivated": 334
+    },
+    "promos": [
+     {
+      "name": "ПЕРМАНЕНТ · Fast Games Day",
+      "period": "",
+      "spend": null,
+      "revenue": null,
+      "users": 1443,
+      "ops": 2514,
+      "newUsers": null,
+      "note": "",
+      "type": "Перманент",
+      "vertical": "Казино",
+      "scope": ""
+     },
+     {
+      "name": "ПЕРМАНЕНТ · Royal Monday",
+      "period": "",
+      "spend": null,
+      "revenue": null,
+      "users": 805,
+      "ops": 1393,
+      "newUsers": null,
+      "note": "",
+      "type": "Перманент",
+      "vertical": "Казино",
+      "scope": ""
+     },
+     {
+      "name": "MB: 20% Cashback: Myanmar: Wave",
+      "period": "",
+      "spend": null,
+      "revenue": null,
+      "users": 460,
+      "ops": 865,
+      "newUsers": null,
+      "note": "",
+      "type": "Перманент",
+      "vertical": "Все",
+      "scope": ""
+     },
+     {
+      "name": "ПЕРМАНЕНТ · 2-3-4 deposit bonus",
+      "period": "",
+      "spend": null,
+      "revenue": null,
+      "users": 448,
+      "ops": 448,
+      "newUsers": null,
+      "note": "",
+      "type": "Перманент",
+      "vertical": "Все",
+      "scope": ""
+     },
+     {
+      "name": "ПЕРМАНЕНТ · CASHBACK REWARDS",
+      "period": "",
+      "spend": null,
+      "revenue": null,
+      "users": 161,
+      "ops": 350,
+      "newUsers": null,
+      "note": "",
+      "type": "Перманент",
+      "vertical": "Все",
+      "scope": ""
+     },
+     {
+      "name": "PICK'EM The International 2026",
+      "period": "",
+      "spend": null,
+      "revenue": null,
+      "users": 45,
+      "ops": 1069,
+      "newUsers": null,
+      "note": "Запуск: 45 участников дали 1 069 операций",
+      "type": "Ситуатив",
+      "vertical": "Киберспорт",
+      "scope": ""
+     },
+     {
+      "name": "Esports World Cup 2026 (EWC)",
+      "period": "",
+      "spend": null,
+      "revenue": null,
+      "users": 38,
+      "ops": 315,
+      "newUsers": null,
+      "note": "",
+      "type": "Ситуатив",
+      "vertical": "Киберспорт",
+      "scope": ""
+     },
+     {
+      "name": "Спонсорство с OG Esports (Dota 2) ID: 21055",
+      "period": "",
+      "spend": null,
+      "revenue": null,
+      "users": 17,
+      "ops": 68,
+      "newUsers": null,
+      "note": "",
+      "type": "Ситуатив",
+      "vertical": "Киберспорт",
+      "scope": ""
+     },
+     {
+      "name": "Бонус на топовые лиги и чемпионаты 26-27",
+      "period": "",
+      "spend": null,
+      "revenue": null,
+      "users": 8,
+      "ops": 52,
+      "newUsers": null,
+      "note": "",
+      "type": "Ситуатив",
+      "vertical": "Спорт",
+      "scope": ""
+     },
+     {
+      "name": "MPL Philippines Season 18",
+      "period": "",
+      "spend": null,
+      "revenue": null,
+      "users": 3,
+      "ops": 3,
+      "newUsers": null,
+      "note": "",
+      "type": "Ситуатив",
+      "vertical": "Киберспорт",
+      "scope": ""
+     },
+     {
+      "name": "MB: Grand Slam Tournaments 2026",
+      "period": "",
+      "spend": null,
+      "revenue": null,
+      "users": 2,
+      "ops": 15,
+      "newUsers": null,
+      "note": "",
+      "type": "Ситуатив",
+      "vertical": "Спорт",
+      "scope": ""
+     },
+     {
+      "name": "Крипто кешбек 20% Tether TRON, Tether BSC",
+      "period": "",
+      "spend": null,
+      "revenue": null,
+      "users": 0,
+      "ops": 0,
+      "newUsers": null,
+      "note": "Второй месяц подряд нулевая активность",
+      "type": "Ситуатив",
+      "vertical": "Все",
+      "scope": ""
+     }
+    ],
+    "tournaments": [],
+    "vip": {
+     "title": "ВИП рассылки",
+     "segments": [],
+     "notes": []
+    },
+    "agents": [],
+    "agentSends": [],
+    "agentTests": [],
+    "channels": [],
+    "topSport": [
+     {
+      "name": "Minnesota Lynx – Indiana Fever · WNBA",
+      "pm": 0.4391,
+      "push": 0.0136,
+      "emailOR": null,
+      "emailCR": null
+     },
+     {
+      "name": "Aston Villa vs Arsenal",
+      "pm": 0.3319,
+      "push": 0.0143,
+      "emailOR": null,
+      "emailCR": null
+     },
+     {
+      "name": "Bayern Munich vs Aston Villa",
+      "pm": 0.3168,
+      "push": 0.0121,
+      "emailOR": 0.0577,
+      "emailCR": 0.0007
+     }
+    ],
+    "topCasino": [
+     {
+      "name": "Rush Hour | New Game",
+      "pm": 0.4089,
+      "push": 0.0239,
+      "emailOR": null,
+      "emailCR": null
+     },
+     {
+      "name": "AviaPlane",
+      "pm": 0.4011,
+      "push": 0.0174,
+      "emailOR": null,
+      "emailCR": null
+     },
+     {
+      "name": "Olympus Peak",
+      "pm": 0.3942,
+      "push": 0.0295,
+      "emailOR": null,
+      "emailCR": null
+     }
+    ],
+    "reactivation": [
+     {
+      "vertical": "Casino",
+      "segment": "10+",
+      "inactivity": "30–180",
+      "base": 2857,
+      "activated": 146,
+      "ctr": 0.0511,
+      "arppu": 8.6,
+      "profit": 380
+     },
+     {
+      "vertical": "Sport",
+      "segment": "10+",
+      "inactivity": "30–180",
+      "base": 2586,
+      "activated": 188,
+      "ctr": 0.0727,
+      "arppu": 2.5,
+      "profit": 206
+     }
+    ],
+    "retention": {
+     "metrics": [],
+     "better": [],
+     "worse": [],
+     "hypotheses": [],
+     "channels": [],
+     "focus": "",
+     "summary": "",
+     "base": "",
+     "funnel": [
+      {
+       "stage": "Reg → 1 деп",
+       "value": null
+      },
+      {
+       "stage": "1 → 2 деп",
+       "value": null
+      },
+      {
+       "stage": "2 → 3 деп",
+       "value": null
+      },
+      {
+       "stage": "3 → 4 деп",
+       "value": null
+      }
+     ],
+     "newSegments": []
+    },
+    "projects": [],
+    "plans": []
+   }
+  },
+  "md": {
+   "2026-05": {
+    "totals": {
+     "betsSport": 87728,
+     "betsCasino": 5433191,
+     "usersSport": 1465,
+     "usersCasino": 2837,
+     "usersDeposit": null,
+     "depositsTotal": null,
+     "retentionRate": 0.736,
+     "newRegistrations": 1263,
+     "reactivated": 217
+    },
+    "promos": [
+     {
+      "name": "Перманент · СБР спорт",
+      "period": "",
+      "spend": null,
+      "revenue": null,
+      "users": 7,
+      "ops": null,
+      "newUsers": null,
+      "note": "",
+      "type": "Перманент",
+      "vertical": "Спорт",
+      "scope": "Глобал"
+     },
+     {
+      "name": "Чемпионская ставка",
+      "period": "",
+      "spend": null,
+      "revenue": null,
+      "users": 1,
+      "ops": 7,
+      "newUsers": null,
+      "note": "",
+      "type": "Перманент",
+      "vertical": "Спорт",
+      "scope": ""
+     },
+     {
+      "name": "Спортивный кешбэк",
+      "period": "",
+      "spend": null,
+      "revenue": null,
+      "users": 236,
+      "ops": 31,
+      "newUsers": null,
+      "note": "",
+      "type": "Перманент",
+      "vertical": "Спорт",
+      "scope": ""
+     },
+     {
+      "name": "Бонус за 100 ставок",
+      "period": "",
+      "spend": null,
+      "revenue": null,
+      "users": 16,
+      "ops": 2,
+      "newUsers": null,
+      "note": "",
+      "type": "Перманент",
+      "vertical": "Спорт",
+      "scope": ""
+     },
+     {
+      "name": "Экспресс дня",
+      "period": "",
+      "spend": null,
+      "revenue": null,
+      "users": 30,
+      "ops": 5,
+      "newUsers": null,
+      "note": "",
+      "type": "Перманент",
+      "vertical": "Спорт",
+      "scope": ""
+     },
+     {
+      "name": "FAST GAMES DAY",
+      "period": "",
+      "spend": null,
+      "revenue": null,
+      "users": 489,
+      "ops": null,
+      "newUsers": null,
+      "note": "",
+      "type": "Перманент",
+      "vertical": "Казино",
+      "scope": ""
+     },
+     {
+      "name": "Королевский понедельник",
+      "period": "",
+      "spend": null,
+      "revenue": null,
+      "users": 442,
+      "ops": null,
+      "newUsers": null,
+      "note": "",
+      "type": "Перманент",
+      "vertical": "Казино",
+      "scope": ""
+     },
+     {
+      "name": "Для своих",
+      "period": "",
+      "spend": null,
+      "revenue": null,
+      "users": 212,
+      "ops": null,
+      "newUsers": null,
+      "note": "",
+      "type": "Перманент",
+      "vertical": "Все",
+      "scope": ""
+     },
+     {
+      "name": "Сможешь дольше",
+      "period": "",
+      "spend": null,
+      "revenue": null,
+      "users": 12,
+      "ops": 2,
+      "newUsers": null,
+      "note": "",
+      "type": "Перманент",
+      "vertical": "Спорт",
+      "scope": ""
+     },
+     {
+      "name": "Toto",
+      "period": "",
+      "spend": null,
+      "revenue": null,
+      "users": 5,
+      "ops": 0,
+      "newUsers": null,
+      "note": "",
+      "type": "Перманент",
+      "vertical": "Спорт",
+      "scope": ""
+     },
+     {
+      "name": "100% Возврат",
+      "period": "",
+      "spend": null,
+      "revenue": null,
+      "users": 1,
+      "ops": 0,
+      "newUsers": null,
+      "note": "",
+      "type": "Перманент",
+      "vertical": "Спорт",
+      "scope": ""
+     }
+    ],
+    "tournaments": [],
+    "retention": {
+     "metrics": [
+      {
+       "name": "Retention Rate, все юзеры",
+       "value": 0.736,
+       "unit": "%",
+       "better": "up"
+      },
+      {
+       "name": "RR Sport",
+       "value": 0.761,
+       "unit": "%",
+       "better": "up"
+      },
+      {
+       "name": "RR Casino",
+       "value": 0.684,
+       "unit": "%",
+       "better": "up"
+      },
+      {
+       "name": "RR 1xGames",
+       "value": 0.627,
+       "unit": "%",
+       "better": "up"
+      },
+      {
+       "name": "RR Multivertical",
+       "value": 0.779,
+       "unit": "%",
+       "better": "up"
+      },
+      {
+       "name": "RR Dep Users",
+       "value": 0.333,
+       "unit": "%",
+       "better": "up"
+      },
+      {
+       "name": "Новых игроков",
+       "value": 1263,
+       "unit": "",
+       "better": "up"
+      },
+      {
+       "name": "RR новых игроков",
+       "value": 0.286,
+       "unit": "%",
+       "better": "up"
+      }
+     ],
+     "better": [
+      "Retention Rate всех юзеров достиг пика года — 73.6%",
+      "RR Dep Users 33.3% — максимум за все месяцы"
+     ],
+     "worse": [],
+     "hypotheses": [],
+     "channels": [],
+     "focus": "",
+     "summary": "",
+     "funnel": [
+      {
+       "stage": "Reg → 1 деп",
+       "value": 0.541
+      },
+      {
+       "stage": "1 → 2 деп",
+       "value": 0.73
+      },
+      {
+       "stage": "2 → 3 деп",
+       "value": 0.756
+      },
+      {
+       "stage": "3 → 4 деп",
+       "value": 0.854
+      }
+     ],
+     "newSegments": [],
+     "base": ""
+    },
+    "projects": [],
+    "plans": [],
+    "vip": {
+     "title": "ВИП рассылки",
+     "segments": [],
+     "notes": []
+    },
+    "agents": [],
+    "agentSends": [],
+    "agentTests": [],
+    "channels": [],
+    "topSport": [],
+    "topCasino": [],
+    "reactivation": [
+     {
+      "vertical": "Sport",
+      "segment": "Overall",
+      "inactivity": "",
+      "base": 565,
+      "activated": 95,
+      "ctr": 0.168,
+      "arppu": null,
+      "profit": null
+     },
+     {
+      "vertical": "Casino",
+      "segment": "10–1999",
+      "inactivity": "",
+      "base": 680,
+      "activated": 118,
+      "ctr": 0.174,
+      "arppu": null,
+      "profit": null
+     },
+     {
+      "vertical": "Casino",
+      "segment": "2000+",
+      "inactivity": "",
+      "base": 18,
+      "activated": 4,
+      "ctr": 0.222,
+      "arppu": null,
+      "profit": null
+     }
+    ]
+   },
+   "2026-06": {
+    "totals": {
+     "betsSport": 90123,
+     "betsCasino": 5744626,
+     "usersSport": 1630,
+     "usersCasino": 3288,
+     "usersDeposit": null,
+     "depositsTotal": null,
+     "retentionRate": 0.63,
+     "newRegistrations": 1407,
+     "reactivated": 198
+    },
+    "promos": [
+     {
+      "name": "MelBet: FIFA World Cup 2026",
+      "period": "",
+      "spend": null,
+      "revenue": null,
+      "users": 369,
+      "ops": null,
+      "newUsers": null,
+      "note": "Старт акции",
+      "type": "Ситуатив",
+      "vertical": "Спорт",
+      "scope": "Глобал",
+      "bets": 1981
+     },
+     {
+      "name": "Перманент · СБР спорт",
+      "period": "",
+      "spend": null,
+      "revenue": null,
+      "users": 10,
+      "ops": null,
+      "newUsers": null,
+      "note": "",
+      "type": "Перманент",
+      "vertical": "Спорт",
+      "scope": "Глобал"
+     },
+     {
+      "name": "Чемпионская ставка",
+      "period": "",
+      "spend": null,
+      "revenue": null,
+      "users": 10,
+      "ops": 3,
+      "newUsers": null,
+      "note": "",
+      "type": "Перманент",
+      "vertical": "Спорт",
+      "scope": ""
+     },
+     {
+      "name": "Спортивный кешбэк",
+      "period": "",
+      "spend": null,
+      "revenue": null,
+      "users": 304,
+      "ops": 43,
+      "newUsers": null,
+      "note": "",
+      "type": "Перманент",
+      "vertical": "Спорт",
+      "scope": ""
+     },
+     {
+      "name": "Бонус за 100 ставок",
+      "period": "",
+      "spend": null,
+      "revenue": null,
+      "users": 22,
+      "ops": 2,
+      "newUsers": null,
+      "note": "",
+      "type": "Перманент",
+      "vertical": "Спорт",
+      "scope": ""
+     },
+     {
+      "name": "Экспресс дня",
+      "period": "",
+      "spend": null,
+      "revenue": null,
+      "users": 32,
+      "ops": 10,
+      "newUsers": null,
+      "note": "",
+      "type": "Перманент",
+      "vertical": "Спорт",
+      "scope": ""
+     },
+     {
+      "name": "FAST GAMES DAY",
+      "period": "",
+      "spend": null,
+      "revenue": null,
+      "users": 549,
+      "ops": null,
+      "newUsers": null,
+      "note": "",
+      "type": "Перманент",
+      "vertical": "Казино",
+      "scope": ""
+     },
+     {
+      "name": "Королевский понедельник",
+      "period": "",
+      "spend": null,
+      "revenue": null,
+      "users": 540,
+      "ops": null,
+      "newUsers": null,
+      "note": "",
+      "type": "Перманент",
+      "vertical": "Казино",
+      "scope": ""
+     },
+     {
+      "name": "Для своих",
+      "period": "",
+      "spend": null,
+      "revenue": null,
+      "users": 192,
+      "ops": null,
+      "newUsers": null,
+      "note": "",
+      "type": "Перманент",
+      "vertical": "Все",
+      "scope": ""
+     },
+     {
+      "name": "Сможешь дольше",
+      "period": "",
+      "spend": null,
+      "revenue": null,
+      "users": 7,
+      "ops": 0,
+      "newUsers": null,
+      "note": "",
+      "type": "Перманент",
+      "vertical": "Спорт",
+      "scope": ""
+     },
+     {
+      "name": "Toto",
+      "period": "",
+      "spend": null,
+      "revenue": null,
+      "users": 8,
+      "ops": 0,
+      "newUsers": null,
+      "note": "",
+      "type": "Перманент",
+      "vertical": "Спорт",
+      "scope": ""
+     },
+     {
+      "name": "100% Возврат",
+      "period": "",
+      "spend": null,
+      "revenue": null,
+      "users": 1,
+      "ops": 0,
+      "newUsers": null,
+      "note": "",
+      "type": "Перманент",
+      "vertical": "Спорт",
+      "scope": ""
+     }
+    ],
+    "tournaments": [],
+    "retention": {
+     "metrics": [
+      {
+       "name": "Retention Rate, все юзеры",
+       "value": 0.63,
+       "unit": "%",
+       "better": "up"
+      },
+      {
+       "name": "RR Sport",
+       "value": 0.784,
+       "unit": "%",
+       "better": "up"
+      },
+      {
+       "name": "RR Casino",
+       "value": 0.507,
+       "unit": "%",
+       "better": "up"
+      },
+      {
+       "name": "RR 1xGames",
+       "value": 0.354,
+       "unit": "%",
+       "better": "up"
+      },
+      {
+       "name": "RR Multivertical",
+       "value": 0.739,
+       "unit": "%",
+       "better": "up"
+      },
+      {
+       "name": "RR Dep Users",
+       "value": 0.105,
+       "unit": "%",
+       "better": "up"
+      },
+      {
+       "name": "Новых игроков",
+       "value": 1407,
+       "unit": "",
+       "better": "up"
+      },
+      {
+       "name": "RR новых игроков",
+       "value": 0.1971,
+       "unit": "%",
+       "better": "up"
+      }
+     ],
+     "better": [],
+     "worse": [
+      "Retention Rate всех юзеров упал с 73.6% до 63.0%",
+      "RR Dep Users обвалился с 33.3% до 10.5%"
+     ],
+     "hypotheses": [],
+     "channels": [],
+     "focus": "",
+     "summary": "",
+     "funnel": [
+      {
+       "stage": "Reg → 1 деп",
+       "value": 0.538
+      },
+      {
+       "stage": "1 → 2 деп",
+       "value": 0.666
+      },
+      {
+       "stage": "2 → 3 деп",
+       "value": 0.755
+      },
+      {
+       "stage": "3 → 4 деп",
+       "value": 0.796
+      }
+     ],
+     "newSegments": [
+      {
+       "name": "1xGames",
+       "value": 136,
+       "rr": 0.1182
+      },
+      {
+       "name": "Casino",
+       "value": 607,
+       "rr": 0.1291
+      },
+      {
+       "name": "Sport",
+       "value": 177,
+       "rr": 0.298
+      },
+      {
+       "name": "Multivertical",
+       "value": 423,
+       "rr": 0.2875
+      },
+      {
+       "name": "Dep Users",
+       "value": 64,
+       "rr": null
+      },
+      {
+       "name": "Всего",
+       "value": 1407,
+       "rr": 0.1971
+      }
+     ],
+     "base": ""
+    },
+    "projects": [],
+    "plans": [],
+    "vip": {
+     "title": "ВИП рассылки",
+     "segments": [],
+     "notes": []
+    },
+    "agents": [],
+    "agentSends": [],
+    "agentTests": [],
+    "channels": [],
+    "topSport": [],
+    "topCasino": [],
+    "reactivation": [
+     {
+      "vertical": "Sport",
+      "segment": "Overall",
+      "inactivity": "",
+      "base": 556,
+      "activated": 87,
+      "ctr": 0.156,
+      "arppu": null,
+      "profit": null
+     },
+     {
+      "vertical": "Casino",
+      "segment": "10–1999",
+      "inactivity": "",
+      "base": 675,
+      "activated": 105,
+      "ctr": 0.156,
+      "arppu": null,
+      "profit": null
+     },
+     {
+      "vertical": "Casino",
+      "segment": "2000+",
+      "inactivity": "",
+      "base": 27,
+      "activated": 6,
+      "ctr": 0.222,
+      "arppu": null,
+      "profit": null
+     }
+    ]
+   },
+   "2026-07": {
+    "totals": {
+     "betsSport": 82315,
+     "betsCasino": 5443470,
+     "usersSport": 1653,
+     "usersCasino": 2403,
+     "usersDeposit": 2827,
+     "depositsTotal": 22019,
+     "retentionRate": 0.574,
+     "newRegistrations": 915,
+     "reactivated": 205
+    },
+    "promos": [
+     {
+      "name": "MelBet: FIFA World Cup 2026",
+      "period": "",
+      "spend": null,
+      "revenue": null,
+      "users": 76,
+      "ops": null,
+      "newUsers": null,
+      "note": "Участников в 4.9 раза меньше, чем в июне, ставок почти столько же",
+      "type": "Ситуатив",
+      "vertical": "Спорт",
+      "scope": "Глобал",
+      "bets": 1831
+     },
+     {
+      "name": "Перманент · СБР кибер",
+      "period": "",
+      "spend": null,
+      "revenue": null,
+      "users": 248,
+      "ops": null,
+      "newUsers": null,
+      "note": "Запуск: сразу 248 участников",
+      "type": "Перманент",
+      "vertical": "Киберспорт",
+      "scope": "Глобал"
+     },
+     {
+      "name": "Перманент · СБР спорт",
+      "period": "",
+      "spend": null,
+      "revenue": null,
+      "users": 39,
+      "ops": null,
+      "newUsers": null,
+      "note": "Рост с 10 до 39 участников",
+      "type": "Перманент",
+      "vertical": "Спорт",
+      "scope": "Глобал"
+     },
+     {
+      "name": "Чемпионская ставка",
+      "period": "",
+      "spend": null,
+      "revenue": null,
+      "users": 39,
+      "ops": 5,
+      "newUsers": null,
+      "note": "",
+      "type": "Перманент",
+      "vertical": "Спорт",
+      "scope": ""
+     },
+     {
+      "name": "Спортивный кешбэк",
+      "period": "",
+      "spend": null,
+      "revenue": null,
+      "users": 301,
+      "ops": 42,
+      "newUsers": null,
+      "note": "",
+      "type": "Перманент",
+      "vertical": "Спорт",
+      "scope": ""
+     },
+     {
+      "name": "Бонус за 100 ставок",
+      "period": "",
+      "spend": null,
+      "revenue": null,
+      "users": 24,
+      "ops": 0,
+      "newUsers": null,
+      "note": "",
+      "type": "Перманент",
+      "vertical": "Спорт",
+      "scope": ""
+     },
+     {
+      "name": "Экспресс дня",
+      "period": "",
+      "spend": null,
+      "revenue": null,
+      "users": 23,
+      "ops": 9,
+      "newUsers": null,
+      "note": "",
+      "type": "Перманент",
+      "vertical": "Спорт",
+      "scope": ""
+     },
+     {
+      "name": "FAST GAMES DAY",
+      "period": "",
+      "spend": null,
+      "revenue": null,
+      "users": 546,
+      "ops": null,
+      "newUsers": null,
+      "note": "",
+      "type": "Перманент",
+      "vertical": "Казино",
+      "scope": ""
+     },
+     {
+      "name": "Королевский понедельник",
+      "period": "",
+      "spend": null,
+      "revenue": null,
+      "users": 398,
+      "ops": null,
+      "newUsers": null,
+      "note": "",
+      "type": "Перманент",
+      "vertical": "Казино",
+      "scope": ""
+     },
+     {
+      "name": "Для своих",
+      "period": "",
+      "spend": null,
+      "revenue": null,
+      "users": 217,
+      "ops": null,
+      "newUsers": null,
+      "note": "",
+      "type": "Перманент",
+      "vertical": "Все",
+      "scope": ""
+     },
+     {
+      "name": "Сможешь дольше",
+      "period": "",
+      "spend": null,
+      "revenue": null,
+      "users": 6,
+      "ops": 0,
+      "newUsers": null,
+      "note": "",
+      "type": "Перманент",
+      "vertical": "Спорт",
+      "scope": ""
+     },
+     {
+      "name": "Toto",
+      "period": "",
+      "spend": null,
+      "revenue": null,
+      "users": 6,
+      "ops": 0,
+      "newUsers": null,
+      "note": "",
+      "type": "Перманент",
+      "vertical": "Спорт",
+      "scope": ""
+     },
+     {
+      "name": "100% Возврат",
+      "period": "",
+      "spend": null,
+      "revenue": null,
+      "users": 2,
+      "ops": 0,
+      "newUsers": null,
+      "note": "",
+      "type": "Перманент",
+      "vertical": "Спорт",
+      "scope": ""
+     },
+     {
+      "name": "The International PICKEM 2026",
+      "period": "",
+      "spend": null,
+      "revenue": null,
+      "users": 8,
+      "ops": null,
+      "newUsers": null,
+      "note": "",
+      "type": "Ситуатив",
+      "vertical": "Киберспорт",
+      "scope": ""
+     }
+    ],
+    "tournaments": [],
+    "retention": {
+     "metrics": [
+      {
+       "name": "Retention Rate, все юзеры",
+       "value": 0.574,
+       "unit": "%",
+       "better": "up"
+      },
+      {
+       "name": "RR Sport",
+       "value": 0.757,
+       "unit": "%",
+       "better": "up"
+      },
+      {
+       "name": "RR Casino",
+       "value": 0.441,
+       "unit": "%",
+       "better": "up"
+      },
+      {
+       "name": "RR 1xGames",
+       "value": 0.282,
+       "unit": "%",
+       "better": "up"
+      },
+      {
+       "name": "RR Multivertical",
+       "value": 0.677,
+       "unit": "%",
+       "better": "up"
+      },
+      {
+       "name": "RR Dep Users",
+       "value": 0.1,
+       "unit": "%",
+       "better": "up"
+      },
+      {
+       "name": "Новых игроков",
+       "value": 915,
+       "unit": "",
+       "better": "up"
+      },
+      {
+       "name": "RR новых игроков",
+       "value": 0.1883,
+       "unit": "%",
+       "better": "up"
+      }
+     ],
+     "better": [
+      "RR Sport 75.7% — самый стабильный сегмент, держится выше 73% шестой месяц подряд",
+      "RR новых игроков в спорте вырос до 31.64%, в мультивертикали до 31.44% — эффект ЧМ",
+      "Users Sport New 195 — максимум с начала года",
+      "Юзеры СПОРТ 1 653 — четвёртый месяц роста подряд"
+     ],
+     "worse": [
+      "Retention Rate всех юзеров упал с 73.6% (май) до 57.4%",
+      "Новых игроков 915 против 1 407 в июне (−35%)",
+      "RR Casino упал до 44.1%, RR 1xGames — до 28.2%",
+      "Юзеры КАЗИНО −885 к июню, ставки КАЗИНО −301 156",
+      "Ставки СПОРТ −7 808 к июню, несмотря на рост числа спорт-юзеров"
+     ],
+     "hypotheses": [],
+     "channels": [],
+     "focus": "Общее удержание достигло пика в мае (73.6%), в июле — заметный спад до 57.4%. Сегмент Sport показывает самую высокую и стабильную лояльность в течение июля за счёт событийки. Приток новых пользователей снизился, вместе с ним просели все количественные показатели. При этом RR новых игроков вырос в спорте и мультивертикали — эффект ЧМ в первой половине месяца.",
+     "summary": "",
+     "funnel": [
+      {
+       "stage": "Reg → 1 деп",
+       "value": 0.443
+      },
+      {
+       "stage": "1 → 2 деп",
+       "value": 0.661
+      },
+      {
+       "stage": "2 → 3 деп",
+       "value": 0.729
+      },
+      {
+       "stage": "3 → 4 деп",
+       "value": 0.8
+      }
+     ],
+     "newSegments": [
+      {
+       "name": "1xGames",
+       "value": 150,
+       "rr": 0.0662
+      },
+      {
+       "name": "Casino",
+       "value": 306,
+       "rr": 0.1071
+      },
+      {
+       "name": "Sport",
+       "value": 195,
+       "rr": 0.3164
+      },
+      {
+       "name": "Multivertical",
+       "value": 228,
+       "rr": 0.3144
+      },
+      {
+       "name": "Dep Users",
+       "value": 36,
+       "rr": null
+      },
+      {
+       "name": "Всего",
+       "value": 915,
+       "rr": 0.1883
+      }
+     ],
+     "base": ""
+    },
+    "projects": [],
+    "plans": [],
+    "vip": {
+     "title": "ВИП рассылки",
+     "segments": [],
+     "notes": []
+    },
+    "agents": [],
+    "agentSends": [],
+    "agentTests": [],
+    "channels": [],
+    "topSport": [],
+    "topCasino": [],
+    "reactivation": [
+     {
+      "vertical": "Sport",
+      "segment": "Overall",
+      "inactivity": "",
+      "base": 547,
+      "activated": 102,
+      "ctr": 0.186,
+      "arppu": null,
+      "profit": null
+     },
+     {
+      "vertical": "Casino",
+      "segment": "10–1999",
+      "inactivity": "",
+      "base": 598,
+      "activated": 98,
+      "ctr": 0.164,
+      "arppu": null,
+      "profit": null
+     },
+     {
+      "vertical": "Casino",
+      "segment": "2000+",
+      "inactivity": "",
+      "base": 24,
+      "activated": 5,
+      "ctr": 0.208,
+      "arppu": null,
+      "profit": null
+     }
+    ]
+   },
+   "2026-04": {
+    "totals": {
+     "betsSport": 81924,
+     "betsCasino": 5631627,
+     "usersSport": 1384,
+     "usersCasino": 2510,
+     "usersDeposit": null,
+     "depositsTotal": null,
+     "retentionRate": 0.634,
+     "newRegistrations": 605,
+     "reactivated": 216
+    },
+    "promos": [
+     {
+      "name": "Чемпионская ставка",
+      "period": "",
+      "spend": null,
+      "revenue": null,
+      "users": 6,
+      "ops": 2,
+      "newUsers": null,
+      "note": "",
+      "type": "Перманент",
+      "vertical": "Спорт",
+      "scope": ""
+     },
+     {
+      "name": "Спортивный кешбэк",
+      "period": "",
+      "spend": null,
+      "revenue": null,
+      "users": 207,
+      "ops": 25,
+      "newUsers": null,
+      "note": "",
+      "type": "Перманент",
+      "vertical": "Спорт",
+      "scope": ""
+     },
+     {
+      "name": "Бонус за 100 ставок",
+      "period": "",
+      "spend": null,
+      "revenue": null,
+      "users": 18,
+      "ops": 3,
+      "newUsers": null,
+      "note": "",
+      "type": "Перманент",
+      "vertical": "Спорт",
+      "scope": ""
+     },
+     {
+      "name": "Экспресс дня",
+      "period": "",
+      "spend": null,
+      "revenue": null,
+      "users": 31,
+      "ops": 9,
+      "newUsers": null,
+      "note": "",
+      "type": "Перманент",
+      "vertical": "Спорт",
+      "scope": ""
+     },
+     {
+      "name": "FAST GAMES DAY",
+      "period": "",
+      "spend": null,
+      "revenue": null,
+      "users": 611,
+      "ops": null,
+      "newUsers": null,
+      "note": "",
+      "type": "Перманент",
+      "vertical": "Казино",
+      "scope": ""
+     },
+     {
+      "name": "Королевский понедельник",
+      "period": "",
+      "spend": null,
+      "revenue": null,
+      "users": 421,
+      "ops": null,
+      "newUsers": null,
+      "note": "",
+      "type": "Перманент",
+      "vertical": "Казино",
+      "scope": ""
+     },
+     {
+      "name": "Для своих",
+      "period": "",
+      "spend": null,
+      "revenue": null,
+      "users": 217,
+      "ops": null,
+      "newUsers": null,
+      "note": "",
+      "type": "Перманент",
+      "vertical": "Все",
+      "scope": ""
+     },
+     {
+      "name": "Toto",
+      "period": "",
+      "spend": null,
+      "revenue": null,
+      "users": 6,
+      "ops": 1,
+      "newUsers": null,
+      "note": "",
+      "type": "Перманент",
+      "vertical": "Спорт",
+      "scope": ""
+     },
+     {
+      "name": "100% Возврат",
+      "period": "",
+      "spend": null,
+      "revenue": null,
+      "users": 2,
+      "ops": 0,
+      "newUsers": null,
+      "note": "",
+      "type": "Перманент",
+      "vertical": "Спорт",
+      "scope": ""
+     }
+    ],
+    "tournaments": [],
+    "vip": {
+     "title": "ВИП рассылки",
+     "segments": [],
+     "notes": []
+    },
+    "agents": [],
+    "agentSends": [],
+    "agentTests": [],
+    "retention": {
+     "metrics": [
+      {
+       "name": "Retention Rate, все юзеры",
+       "value": 0.634,
+       "unit": "%",
+       "better": "up"
+      },
+      {
+       "name": "RR Sport",
+       "value": 0.738,
+       "unit": "%",
+       "better": "up"
+      },
+      {
+       "name": "RR Casino",
+       "value": 0.604,
+       "unit": "%",
+       "better": "up"
+      },
+      {
+       "name": "RR 1xGames",
+       "value": 0.544,
+       "unit": "%",
+       "better": "up"
+      },
+      {
+       "name": "RR Multivertical",
+       "value": 0.629,
+       "unit": "%",
+       "better": "up"
+      },
+      {
+       "name": "RR Dep Users",
+       "value": 0.136,
+       "unit": "%",
+       "better": "up"
+      },
+      {
+       "name": "Новых игроков",
+       "value": 605,
+       "unit": "",
+       "better": "up"
+      },
+      {
+       "name": "RR новых игроков",
+       "value": 0.2687,
+       "unit": "%",
+       "better": "up"
+      }
+     ],
+     "better": [],
+     "worse": [],
+     "hypotheses": [],
+     "channels": [],
+     "focus": "",
+     "summary": "",
+     "base": "",
+     "funnel": [],
+     "newSegments": []
+    },
+    "projects": [],
+    "plans": [],
+    "channels": [],
+    "topSport": [],
+    "topCasino": [],
+    "reactivation": [
+     {
+      "vertical": "Sport",
+      "segment": "Overall",
+      "inactivity": "",
+      "base": 538,
+      "activated": 127,
+      "ctr": 0.236,
+      "arppu": null,
+      "profit": null
+     },
+     {
+      "vertical": "Casino",
+      "segment": "10–1999",
+      "inactivity": "",
+      "base": 589,
+      "activated": 86,
+      "ctr": 0.146,
+      "arppu": null,
+      "profit": null
+     },
+     {
+      "vertical": "Casino",
+      "segment": "2000+",
+      "inactivity": "",
+      "base": 17,
+      "activated": 3,
+      "ctr": 0.176,
+      "arppu": null,
+      "profit": null
+     }
+    ]
+   },
+   "2026-08": {
+    "totals": {
+     "betsSport": 82525,
+     "betsCasino": 5676427,
+     "usersSport": 1158,
+     "usersCasino": 2296,
+     "bonusSport": null,
+     "bonusCasino": null,
+     "usersDeposit": 2120,
+     "depositsTotal": 22608,
+     "retentionRate": 0.595,
+     "newRegistrations": 502,
+     "reactivated": 180
+    },
+    "promos": [
+     {
+      "name": "Чемпионская ставка",
+      "period": "",
+      "spend": null,
+      "revenue": null,
+      "users": 5,
+      "ops": 2,
+      "newUsers": null,
+      "note": "",
+      "type": "Перманент",
+      "vertical": "Спорт",
+      "scope": ""
+     },
+     {
+      "name": "Спортивный кешбэк",
+      "period": "",
+      "spend": null,
+      "revenue": null,
+      "users": 197,
+      "ops": 19,
+      "newUsers": null,
+      "note": "",
+      "type": "Перманент",
+      "vertical": "Спорт",
+      "scope": ""
+     },
+     {
+      "name": "Бонус за 100 ставок",
+      "period": "",
+      "spend": null,
+      "revenue": null,
+      "users": 16,
+      "ops": 2,
+      "newUsers": null,
+      "note": "",
+      "type": "Перманент",
+      "vertical": "Спорт",
+      "scope": ""
+     },
+     {
+      "name": "Экспресс дня",
+      "period": "",
+      "spend": null,
+      "revenue": null,
+      "users": 17,
+      "ops": 5,
+      "newUsers": null,
+      "note": "",
+      "type": "Перманент",
+      "vertical": "Спорт",
+      "scope": ""
+     },
+     {
+      "name": "FAST GAMES DAY",
+      "period": "",
+      "spend": null,
+      "revenue": null,
+      "users": 508,
+      "ops": null,
+      "newUsers": null,
+      "note": "",
+      "type": "Перманент",
+      "vertical": "Казино",
+      "scope": ""
+     },
+     {
+      "name": "Королевский понедельник",
+      "period": "",
+      "spend": null,
+      "revenue": null,
+      "users": 357,
+      "ops": null,
+      "newUsers": null,
+      "note": "",
+      "type": "Перманент",
+      "vertical": "Казино",
+      "scope": ""
+     },
+     {
+      "name": "Для своих",
+      "period": "",
+      "spend": null,
+      "revenue": null,
+      "users": 209,
+      "ops": null,
+      "newUsers": null,
+      "note": "",
+      "type": "Перманент",
+      "vertical": "Все",
+      "scope": ""
+     },
+     {
+      "name": "Сможешь дольше",
+      "period": "",
+      "spend": null,
+      "revenue": null,
+      "users": 12,
+      "ops": 0,
+      "newUsers": null,
+      "note": "",
+      "type": "Перманент",
+      "vertical": "Спорт",
+      "scope": ""
+     },
+     {
+      "name": "Toto",
+      "period": "",
+      "spend": null,
+      "revenue": null,
+      "users": 2,
+      "ops": 0,
+      "newUsers": null,
+      "note": "",
+      "type": "Перманент",
+      "vertical": "Спорт",
+      "scope": ""
+     },
+     {
+      "name": "100% Возврат",
+      "period": "",
+      "spend": null,
+      "revenue": null,
+      "users": 2,
+      "ops": 0,
+      "newUsers": null,
+      "note": "",
+      "type": "Перманент",
+      "vertical": "Спорт",
+      "scope": ""
+     },
+     {
+      "name": "The International PICKEM 2026",
+      "period": "",
+      "spend": null,
+      "revenue": null,
+      "users": 36,
+      "ops": null,
+      "newUsers": null,
+      "note": "",
+      "type": "Ситуатив",
+      "vertical": "Киберспорт",
+      "scope": ""
+     },
+     {
+      "name": "Бонус на топовые лиги и чемпионаты 26-27",
+      "period": "",
+      "spend": null,
+      "revenue": null,
+      "users": 22,
+      "ops": null,
+      "newUsers": null,
+      "note": "",
+      "type": "Ситуатив",
+      "vertical": "Спорт",
+      "scope": ""
+     }
+    ],
+    "tournaments": [],
+    "vip": {
+     "title": "ВИП рассылки",
+     "segments": [],
+     "notes": []
+    },
+    "agents": [],
+    "agentSends": [],
+    "agentTests": [],
+    "channels": [
+     {
+      "channel": "App Push",
+      "metric": "Click Rate",
+      "value": 0.0387,
+      "delta": null
+     }
+    ],
+    "topSport": [
+     {
+      "name": "PUSH_SPORT_PC · Get 100 MDL: SEVvsRVA_14.08",
+      "channel": "App Push",
+      "sent": 555,
+      "cr": 0.1171,
+      "clicks": 65
+     },
+     {
+      "name": "PUSH_SPORT_PC · Get 100 MDL",
+      "channel": "App Push",
+      "sent": 536,
+      "cr": 0.1007,
+      "clicks": 54
+     },
+     {
+      "name": "PUSH_FOOTBALL · WC26 cyber_02.08",
+      "channel": "App Push",
+      "sent": 706,
+      "cr": 0.0127,
+      "clicks": 9
+     }
+    ],
+    "topCasino": [
+     {
+      "name": "PUSH_CasinoPC · promocod Le40_21.08",
+      "channel": "App Push",
+      "sent": 450,
+      "cr": 0.1311,
+      "clicks": 59
+     },
+     {
+      "name": "PUSH_CasinoPC · promocod Bone25_14.08",
+      "channel": "App Push",
+      "sent": 456,
+      "cr": 0.1096,
+      "clicks": 50
+     },
+     {
+      "name": "PUSH · Promocod Gilded30_28.08",
+      "channel": "App Push",
+      "sent": 441,
+      "cr": 0.0907,
+      "clicks": 40
+     }
+    ],
+    "reactivation": [
+     {
+      "vertical": "Sport",
+      "segment": "Overall",
+      "inactivity": "",
+      "base": 725,
+      "activated": 119,
+      "ctr": 0.1641,
+      "arppu": null,
+      "profit": null
+     },
+     {
+      "vertical": "Casino",
+      "segment": "10–1999",
+      "inactivity": "",
+      "base": 622,
+      "activated": 55,
+      "ctr": 0.0884,
+      "arppu": null,
+      "profit": null
+     },
+     {
+      "vertical": "Casino",
+      "segment": "2000+",
+      "inactivity": "",
+      "base": 26,
+      "activated": 6,
+      "ctr": 0.23,
+      "arppu": null,
+      "profit": null
+     }
+    ],
+    "retention": {
+     "metrics": [],
+     "better": [],
+     "worse": [],
+     "hypotheses": [],
+     "channels": [],
+     "focus": "",
+     "summary": "",
+     "base": "",
+     "funnel": [
+      {
+       "stage": "Reg → 1 деп",
+       "value": null
+      },
+      {
+       "stage": "1 → 2 деп",
+       "value": null
+      },
+      {
+       "stage": "2 → 3 деп",
+       "value": null
+      },
+      {
+       "stage": "3 → 4 деп",
+       "value": null
+      }
+     ],
+     "newSegments": []
+    },
+    "projects": [],
+    "plans": []
+   }
+  }
+ },
+ "tournaments": {
+  "mm": [
+   {
+    "name": "Казино турнир MelBet — Score & Strip",
+    "game": "Завершён в июле — в августе не проводился",
+    "period": "Июль 2026",
+    "playersByMonth": {
+     "2026-07": 581
+    },
+    "usesByMonth": {},
+    "id": "mm-1"
+   },
+   {
+    "name": "CASINO CUP 2026",
+    "game": "Завершён в июле — в августе не проводился",
+    "period": "Июль 2026",
+    "playersByMonth": {
+     "2026-07": 166
+    },
+    "usesByMonth": {},
+    "id": "mm-2"
+   },
+   {
+    "name": "Stay Shroomed",
+    "game": "Stay Shroomed",
+    "period": "03.09 – 28.09",
+    "playersByMonth": {},
+    "usesByMonth": {},
+    "id": "mm-3"
+   },
+   {
+    "name": "Olympus Peak",
+    "game": "[MelBet] Gates of Olympus 1000™ (Pragmatic Play)",
+    "period": "01.08.2026 – 30.09.2026",
+    "playersByMonth": {
+     "2026-08": 112
+    },
+    "usesByMonth": {
+     "2026-08": 317
+    },
+    "id": "mm-4"
+   },
+   {
+    "name": "Fast Games (promo)",
+    "game": "MB: Fast Games: Fast Seven",
+    "period": "01.09 – 30.11",
+    "playersByMonth": {},
+    "usesByMonth": {},
+    "id": "mm-5"
+   },
+   {
+    "name": "Календарь бонусов (запрос от продактов) · Monday Charge (Daily Drop)",
+    "game": "",
+    "period": "Октябрь",
+    "playersByMonth": {},
+    "usesByMonth": {},
+    "id": "mm-6"
+   },
+   {
+    "name": "Slot 9 (FS)",
+    "game": "",
+    "period": "01.10.2026 – 30.11.2026",
+    "playersByMonth": {},
+    "usesByMonth": {},
+    "id": "mm-7"
+   },
+   {
+    "name": "Halloween 2026",
+    "game": "",
+    "period": "26.10.2026 – 02.11.2026",
+    "playersByMonth": {},
+    "usesByMonth": {},
+    "id": "mm-8"
+   },
+   {
+    "name": "Retro Slots Year (Гранд Финал)",
+    "game": "MB: Турнир: Retro Slots Year (Гранд Финал)",
+    "period": "01.11.2026 – 30.11.2026",
+    "playersByMonth": {},
+    "usesByMonth": {},
+    "id": "mm-9"
+   },
+   {
+    "name": "Free Spin Galaxy (ФС, отработка сб/вс)",
+    "game": "",
+    "period": "01.11.2026 – 31.12.2026",
+    "playersByMonth": {},
+    "usesByMonth": {},
+    "id": "mm-10"
+   },
+   {
+    "name": "Bonus Galaxy (% бонус, отработка сб/вс)",
+    "game": "",
+    "period": "01.11.2026 – 31.12.2026",
+    "playersByMonth": {},
+    "usesByMonth": {},
+    "id": "mm-11"
+   },
+   {
+    "name": "Чёрная Пятница",
+    "game": "MB: Казино: Бонус: Mega Deals Festival",
+    "period": "23.11 – 30.11",
+    "playersByMonth": {},
+    "usesByMonth": {},
+    "id": "mm-12"
+   },
+   {
+    "name": "Mega Deals Festival",
+    "game": "",
+    "period": "23.11.2026 – 30.11.2026",
+    "playersByMonth": {},
+    "usesByMonth": {},
+    "id": "mm-13"
+   },
+   {
+    "name": "Рождество и Новый год",
+    "game": "",
+    "period": "01.12.2026 – 15.01.2027",
+    "playersByMonth": {},
+    "usesByMonth": {},
+    "id": "mm-14"
+   }
+  ],
+  "md": [
+   {
+    "name": "Казино турнир MelBet — Score & Strip",
+    "game": "Завершён в июле — в августе не проводился",
+    "period": "Июль 2026",
+    "playersByMonth": {
+     "2026-07": 282
+    },
+    "usesByMonth": {},
+    "id": "md-1"
+   },
+   {
+    "name": "Stay Shroomed",
+    "game": "Stay Shroomed",
+    "period": "03.09 – 28.09",
+    "playersByMonth": {},
+    "usesByMonth": {},
+    "id": "md-2"
+   },
+   {
+    "name": "Olympus Peak",
+    "game": "[MelBet] Gates of Olympus 1000™ (Pragmatic Play)",
+    "period": "01.08.2026 – 30.09.2026",
+    "playersByMonth": {
+     "2026-08": 259
+    },
+    "usesByMonth": {
+     "2026-08": 686
+    },
+    "id": "md-3"
+   },
+   {
+    "name": "Fast Games (promo)",
+    "game": "MB: Fast Games: Fast Seven",
+    "period": "01.09 – 30.11",
+    "playersByMonth": {},
+    "usesByMonth": {},
+    "id": "md-4"
+   },
+   {
+    "name": "Календарь бонусов (запрос от продактов) · Monday Charge (Daily Drop)",
+    "game": "",
+    "period": "Октябрь",
+    "playersByMonth": {},
+    "usesByMonth": {},
+    "id": "md-5"
+   },
+   {
+    "name": "Slot 9 (FS)",
+    "game": "",
+    "period": "01.10.2026 – 30.11.2026",
+    "playersByMonth": {},
+    "usesByMonth": {},
+    "id": "md-6"
+   },
+   {
+    "name": "Halloween 2026",
+    "game": "",
+    "period": "26.10.2026 – 02.11.2026",
+    "playersByMonth": {},
+    "usesByMonth": {},
+    "id": "md-7"
+   },
+   {
+    "name": "Retro Slots Year (Гранд Финал)",
+    "game": "MB: Турнир: Retro Slots Year (Гранд Финал)",
+    "period": "01.11.2026 – 30.11.2026",
+    "playersByMonth": {},
+    "usesByMonth": {},
+    "id": "md-8"
+   },
+   {
+    "name": "Free Spin Galaxy (ФС, отработка сб/вс)",
+    "game": "",
+    "period": "01.11.2026 – 31.12.2026",
+    "playersByMonth": {},
+    "usesByMonth": {},
+    "id": "md-9"
+   },
+   {
+    "name": "Bonus Galaxy (% бонус, отработка сб/вс)",
+    "game": "",
+    "period": "01.11.2026 – 31.12.2026",
+    "playersByMonth": {},
+    "usesByMonth": {},
+    "id": "md-10"
+   },
+   {
+    "name": "Чёрная Пятница",
+    "game": "MB: Казино: Бонус: Mega Deals Festival",
+    "period": "23.11 – 30.11",
+    "playersByMonth": {},
+    "usesByMonth": {},
+    "id": "md-11"
+   },
+   {
+    "name": "Mega Deals Festival",
+    "game": "",
+    "period": "23.11.2026 – 30.11.2026",
+    "playersByMonth": {},
+    "usesByMonth": {},
+    "id": "md-12"
+   },
+   {
+    "name": "Рождество и Новый год",
+    "game": "",
+    "period": "01.12.2026 – 15.01.2027",
+    "playersByMonth": {},
+    "usesByMonth": {},
+    "id": "md-13"
+   }
+  ]
+ }
+}
