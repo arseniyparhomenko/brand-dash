@@ -3,6 +3,8 @@ const seed = require('../data/current.json');
 
 module.exports = async (req, res) => {
   res.setHeader('Cache-Control', 'no-store');
+  // Разрешаем читать эти данные только с clickup-dashboard-hub — карточка Reports тянет метрики оттуда.
+  res.setHeader('Access-Control-Allow-Origin', 'https://clickup-dashboard-hub.vercel.app');
 
   if (!L.redisConfig()) {
     // хранилище не подключено — отдаём файл из репозитория, только чтение
