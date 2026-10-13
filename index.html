@@ -57,9 +57,9 @@
   .savemsg.ok{color:var(--up);} .savemsg.err{color:var(--down);}
   .booting{padding:60px 0;text-align:center;color:var(--ink-faint);font-size:14px;}
 
-  .modal-ov{position:fixed;inset:0;background:rgba(20,16,10,.45);display:none;align-items:center;justify-content:center;z-index:50;padding:20px;}
+  .modal-ov{position:fixed;inset:0;background:rgba(20,16,10,.55);display:none;align-items:center;justify-content:center;z-index:50;padding:20px;}
   .modal-ov.show{display:flex;}
-  .modal-card{background:var(--paper);border-radius:14px;max-width:560px;width:100%;max-height:82vh;
+  .modal-card{background:var(--card);border:1px solid var(--line);border-radius:14px;max-width:640px;width:100%;max-height:82vh;
     display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,.25);}
   .modal-head{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--line);}
   .modal-head h3{margin:0;font-size:16px;}
@@ -71,6 +71,15 @@
   .modal-row .tag{font-size:11px;font-weight:700;padding:1px 7px;border-radius:6px;white-space:nowrap;}
   .modal-row .tag.new{background:#e4f3ea;color:#1f7a45;}
   .modal-row .tag.overwrite{background:#fdecec;color:#b23b3b;}
+  .modal-sum{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:4px;}
+  .modal-sum .chip{flex:1;min-width:140px;border-radius:10px;padding:10px 12px;border:1px solid var(--line);}
+  .modal-sum .chip b{display:block;font-size:20px;line-height:1.2;}
+  .modal-sum .chip span{font-size:12px;color:var(--ink-soft);}
+  .modal-sum .chip.new{background:#e4f3ea;border-color:#bfe0cb;}
+  .modal-sum .chip.over{background:#fbf3e4;border-color:#ecd9b0;}
+  .modal-det{margin:6px 0 2px;border:1px solid var(--line);border-radius:10px;padding:0 12px;}
+  .modal-det summary{cursor:pointer;padding:9px 0;font-weight:600;font-size:13px;}
+  .modal-sub{color:var(--ink-faint);font-size:12px;}
   .modal-warn{color:#a5680a;}
   .modal-foot{padding:14px 20px;border-top:1px solid var(--line);display:flex;justify-content:flex-end;gap:10px;}
 
@@ -1257,41 +1266,49 @@ function importPreview(html){
 }
 
 function renderImportDiff(token, diff){
-  var body='';
-  body+='<h4>Месяцы</h4>';
-  body+=diff.months.map(function(m){
-    var f=m.fields||{};
-    var parts=['totals '+f.totals, 'промо '+f.promos, 'турниры '+f.tournaments];
-    if(f.vip) parts.push('vip '+f.vip);
-    if(f.channels) parts.push('каналы '+f.channels);
-    if(f.retention==='заполнено') parts.push('ретеншен ✓');
-    var warn = (m.warnings&&m.warnings.length) ? '<div class="modal-warn">'+esc(m.warnings.join('; '))+'</div>' : '';
+  function parts(m){
+    var f=m.fields||{}, p=['промо '+f.promos];
+    if(f.vip) p.push('vip '+f.vip);
+    if(f.channels) p.push('каналы '+f.channels);
+    if(f.retention==='заполнено') p.push('ретеншен');
+    return p.join(' · ');
+  }
+  function row(m){
+    var warn=(m.warnings&&m.warnings.length)?'<div class="modal-warn modal-sub">'+esc(m.warnings.join('; '))+'</div>':'';
     return '<div class="modal-row"><div>'+esc(m.geo.toUpperCase())+' · '+esc(m.label||m.id)+
-      '<div style="color:var(--ink-faint);font-size:12px">'+esc(parts.join(' · '))+'</div>'+warn+'</div>'+
-      '<span class="tag '+m.action+'">'+(m.action==='new'?'новый месяц':'ПЕРЕЗАПИШЕТ')+'</span></div>';
-  }).join('');
+      '<div class="modal-sub">'+esc(parts(m))+'</div>'+warn+'</div></div>';
+  }
+  var fresh=diff.months.filter(function(m){ return m.action==='new'; });
+  var over=diff.months.filter(function(m){ return m.action!=='new'; });
+  var body='<div class="modal-sum">'+
+    '<div class="chip new"><b>'+fresh.length+'</b><span>новых месяцев</span></div>'+
+    '<div class="chip over"><b>'+over.length+'</b><span>уже есть на сайте — будут заменены</span></div></div>';
+
+  if(fresh.length) body+='<h4>Новое</h4>'+fresh.map(row).join('');
+  if(over.length){
+    body+='<details class="modal-det"><summary>Будут заменены присланными ('+over.length+')</summary>'+over.map(row).join('')+'</details>';
+  }
 
   var tKeys=Object.keys(diff.tournaments||{});
   if(tKeys.length){
     body+='<h4>Турниры</h4><ul>'+tKeys.map(function(g){
       var t=diff.tournaments[g];
-      return '<li>'+esc(g.toUpperCase())+': доливаем цифры в '+t.matched+', новых турниров — '+t.added+'</li>';
+      return '<li>'+esc(g.toUpperCase())+': обновлено '+t.matched+', новых — '+t.added+'</li>';
     }).join('')+'</ul>';
   }
   if(diff.newTournaments && diff.newTournaments.length){
-    body+='<h4>Новые турниры</h4><ul>'+diff.newTournaments.map(function(t){ return '<li>'+esc(t)+'</li>'; }).join('')+'</ul>';
+    body+='<div class="modal-sub" style="margin-top:2px">Новые: '+diff.newTournaments.map(esc).join('; ')+'</div>';
   }
   if(diff.agentsBoard && diff.agentsBoard.length){
     body+='<h4>Поиск агентов</h4><ul>'+diff.agentsBoard.map(function(a){
-      return '<li>'+esc(a.geo.toUpperCase())+': база заменится целиком — рассылок '+a.sends+', тестов '+a.tests+'</li>';
+      return '<li>'+esc(a.geo.toUpperCase())+': база заменится целиком (рассылок '+a.sends+', тестов '+a.tests+')</li>';
     }).join('')+'</ul>';
   }
   if(diff.unknownGeos && diff.unknownGeos.length){
     body+='<h4>Не понял</h4><div class="modal-warn">Гео "'+esc(diff.unknownGeos.join(', '))+'" нет в дашборде — эти данные пропущены.</div>';
   }
-  var hasOverwrite = diff.months.some(function(m){ return m.action==='overwrite'; });
-  if(hasOverwrite){
-    body+='<div class="modal-warn" style="margin-top:10px">⚠ Часть месяцев уже есть на сайте — их данные будут заменены присланными.</div>';
+  if(diff.warnings && diff.warnings.length){
+    body+='<h4>Предупреждения</h4><ul class="modal-warn">'+diff.warnings.map(function(w){ return '<li>'+esc(w)+'</li>'; }).join('')+'</ul>';
   }
 
   openModal('Что изменится', body,

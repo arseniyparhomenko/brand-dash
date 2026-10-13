@@ -145,16 +145,15 @@ function countFields(month) {
   return out;
 }
 
+// Spend/Revenue у промо не заполнялись ни в одном месяце, поэтому «пусто у всех» — не ошибка и не предупреждение.
+// Предупреждаем только если заполнено частично: тогда, скорее всего, что-то потерялось.
 function promoWarnings(month) {
   const promos = Array.isArray(month && month.promos) ? month.promos : [];
-  let noSpend = 0, noRevenue = 0;
-  promos.forEach(function (p) {
-    if (p.spend === null || p.spend === undefined) noSpend++;
-    if (p.revenue === null || p.revenue === undefined) noRevenue++;
-  });
   const w = [];
-  if (noSpend) w.push(noSpend + ' из ' + promos.length + ' промо без Spend');
-  if (noRevenue) w.push(noRevenue + ' из ' + promos.length + ' промо без Revenue');
+  [['spend', 'Spend'], ['revenue', 'Revenue']].forEach(function (f) {
+    const empty = promos.filter(function (p) { return p[f[0]] === null || p[f[0]] === undefined; }).length;
+    if (empty && empty < promos.length) w.push(empty + ' из ' + promos.length + ' промо без ' + f[1]);
+  });
   return w;
 }
 
