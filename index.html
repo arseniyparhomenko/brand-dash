@@ -29,11 +29,11 @@
   /* ---------- header ---------- */
   .topbar{position:sticky;top:0;z-index:30;background:rgba(244,242,236,.94);backdrop-filter:blur(8px);
     border-bottom:1px solid var(--line);}
-  .topbar .inner{max-width:1240px;margin:0 auto;padding:12px 20px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+  .topbar .inner{max-width:1240px;margin:0 auto;padding:12px 20px;display:flex;align-items:center;gap:10px 18px;flex-wrap:wrap;}
   .brand{display:flex;flex-direction:column;margin-right:auto;}
   .brand .eyebrow{font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);font-weight:800;}
   .brand h1{font-size:19px;margin:1px 0 0;}
-  .ctrl{display:flex;align-items:center;gap:8px;}
+  .ctrl{display:flex;align-items:center;gap:8px;flex-wrap:wrap;min-width:0;}
   select,.btn{font:inherit;font-size:13px;border-radius:9px;border:1px solid var(--line);background:var(--card);
     color:var(--ink);padding:7px 11px;cursor:pointer;}
   .btn:hover{border-color:var(--accent);color:var(--accent);}
@@ -44,16 +44,17 @@
   .seg button{font:inherit;font-size:13px;font-weight:600;border:0;background:transparent;color:var(--ink-soft);
     padding:6px 14px;border-radius:8px;cursor:pointer;}
   .seg button.on{background:var(--accent);color:#fff;}
-  .monthSeg{display:flex;gap:2px;overflow-x:auto;max-width:min(46vw,300px);
+  .monthSeg{display:flex;gap:2px;overflow-x:auto;min-width:0;max-width:min(100%,560px);
     background:var(--card);border:1px solid var(--line);border-radius:10px;padding:3px;
     scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch;}
   .monthSeg::-webkit-scrollbar{height:0;}
   .monthSeg button{font:inherit;font-size:13px;font-weight:600;border:0;background:transparent;color:var(--ink-soft);
     padding:6px 11px;border-radius:8px;cursor:pointer;white-space:nowrap;flex:0 0 auto;scroll-snap-align:end;}
   .monthSeg button.on{background:var(--accent);color:#fff;}
-  @media(max-width:640px){.monthSeg{max-width:52vw;}}
+  @media(max-width:640px){.monthSeg{max-width:100%;order:5;flex:1 1 100%;}}
 
-  .savemsg{font-size:12.5px;color:var(--ink-faint);max-width:210px;line-height:1.3;}
+  .savemsg{font-size:12.5px;color:var(--ink-faint);white-space:nowrap;line-height:1.3;}
+  .savemsg:empty{display:none;}
   .savemsg.ok{color:var(--up);} .savemsg.err{color:var(--down);}
   .booting{padding:60px 0;text-align:center;color:var(--ink-faint);font-size:14px;}
 
