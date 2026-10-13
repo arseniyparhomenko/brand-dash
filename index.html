@@ -1278,6 +1278,14 @@ function renderImportDiff(token, diff){
       return '<li>'+esc(g.toUpperCase())+': доливаем цифры в '+t.matched+', новых турниров — '+t.added+'</li>';
     }).join('')+'</ul>';
   }
+  if(diff.newTournaments && diff.newTournaments.length){
+    body+='<h4>Новые турниры</h4><ul>'+diff.newTournaments.map(function(t){ return '<li>'+esc(t)+'</li>'; }).join('')+'</ul>';
+  }
+  if(diff.agentsBoard && diff.agentsBoard.length){
+    body+='<h4>Поиск агентов</h4><ul>'+diff.agentsBoard.map(function(a){
+      return '<li>'+esc(a.geo.toUpperCase())+': база заменится целиком — рассылок '+a.sends+', тестов '+a.tests+'</li>';
+    }).join('')+'</ul>';
+  }
   if(diff.unknownGeos && diff.unknownGeos.length){
     body+='<h4>Не понял</h4><div class="modal-warn">Гео "'+esc(diff.unknownGeos.join(', '))+'" нет в дашборде — эти данные пропущены.</div>';
   }

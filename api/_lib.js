@@ -118,6 +118,8 @@ const SECTION_KEYS = [
   'agentSends', 'agentTests', 'projects', 'plans'
 ];
 
+const LEGACY_MONTH_KEYS = ['agents', 'agentSends', 'agentTests'];
+
 function normName(s) {
   return String(s || '').trim().toLowerCase().replace(/\s+/g, ' ');
 }
@@ -170,7 +172,7 @@ function planImport(current, incoming) {
   const knownGeoIds = merged.geos.map(function (g) { return g.id; });
   const monthIndex = {}; merged.months.forEach(function (m, i) { monthIndex[m.id] = i; });
 
-  const diff = { months: [], warnings: [], tournaments: {}, unknownGeos: [] };
+  const diff = { months: [], warnings: [], tournaments: {}, newTournaments: [], agentsBoard: [], unknownGeos: [] };
 
   const incomingGeoIds = Object.keys(incoming.data || {});
   incomingGeoIds.forEach(function (geoId) {
@@ -185,17 +187,25 @@ function planImport(current, incoming) {
     monthIds.forEach(function (monthId) {
       if (!/^\d{4}-\d{2}$/.test(monthId)) { diff.warnings.push('гео ' + geoId + ': месяц "' + monthId + '" не похож на YYYY-MM, пропустил'); return; }
       const incMonth = incoming.data[geoId][monthId];
-      const isNew = !(monthId in monthIndex);
-
-      // сам месяц: берём целиком, как прислали — так и задумано, она пересобирает месяц с нуля
       merged.data[geoId] = merged.data[geoId] || {};
-      merged.data[geoId][monthId] = incMonth;
+      const prevMonth = merged.data[geoId][monthId];
+      const isNew = !prevMonth;
 
-      if (isNew) {
+      // сам месяц: берём целиком, как прислали — так и задумано, она пересобирает месяц с нуля.
+      // Исключение — рассылки агентов: в новом формате они живут в agentsBoard, а не в месяце,
+      // поэтому старые помесячные записи не стираем, если в файле этих полей нет.
+      merged.data[geoId][monthId] = incMonth;
+      if (prevMonth) {
+        LEGACY_MONTH_KEYS.forEach(function (k) {
+          if (incMonth[k] === undefined && prevMonth[k] !== undefined) incMonth[k] = prevMonth[k];
+        });
+      }
+
+      if (!(monthId in monthIndex)) {
         const label = (incoming.months || []).filter(function (m) { return m.id === monthId; })[0];
         merged.months.push({ id: monthId, label: label ? label.label : monthId });
         merged.months.sort(function (a, b) { return a.id < b.id ? -1 : a.id > b.id ? 1 : 0; });
-        monthIndex[monthId] = merged.months.length; // приблизительно, для diff неважно
+        monthIndex[monthId] = merged.months.length;
       }
 
       var labelRow = merged.months.filter(function (m) { return m.id === monthId; })[0];
@@ -236,6 +246,55 @@ function planImport(current, incoming) {
 
     if (matched || added) diff.tournaments[geoId] = { matched: matched, added: added };
   });
+
+  // турниры верхнего уровня (новый формат: у каждого гео список с playersByMonth/usesByMonth)
+  Object.keys(incoming.tournaments || {}).forEach(function (geoId) {
+    if (knownGeoIds.indexOf(geoId) < 0) return;
+    const list = Array.isArray(incoming.tournaments[geoId]) ? incoming.tournaments[geoId] : [];
+    merged.tournaments[geoId] = merged.tournaments[geoId] || [];
+    if (!merged.meta.tournamentSeq[geoId]) merged.meta.tournamentSeq[geoId] = merged.tournaments[geoId].length;
+    const stat = diff.tournaments[geoId] || { matched: 0, added: 0 };
+    list.forEach(function (t) {
+      const key = normName(t.name);
+      if (!key) return;
+      const existing = merged.tournaments[geoId].filter(function (x) { return normName(x.name) === key; })[0];
+      if (existing) {
+        stat.matched++;
+        existing.period = t.period || existing.period;
+        existing.game = t.game || existing.game;
+        existing.playersByMonth = Object.assign(existing.playersByMonth || {}, t.playersByMonth || {});
+        existing.usesByMonth = Object.assign(existing.usesByMonth || {}, t.usesByMonth || {});
+      } else {
+        stat.added++;
+        merged.meta.tournamentSeq[geoId]++;
+        merged.tournaments[geoId].push({
+          id: geoId + '-' + merged.meta.tournamentSeq[geoId],
+          name: t.name, period: t.period || '', game: t.game || '',
+          playersByMonth: Object.assign({}, t.playersByMonth || {}),
+          usesByMonth: Object.assign({}, t.usesByMonth || {})
+        });
+        diff.newTournaments.push(geoId + ': ' + t.name);
+      }
+    });
+    if (stat.matched || stat.added) diff.tournaments[geoId] = stat;
+  });
+
+  // «Поиск агентов»: накопительная база по гео, файл всегда присылает её целиком — заменяем по гео
+  if (incoming.agentsBoard && typeof incoming.agentsBoard === 'object') {
+    merged.agentsBoard = merged.agentsBoard || {};
+    Object.keys(incoming.agentsBoard).forEach(function (geoId) {
+      if (knownGeoIds.indexOf(geoId) < 0) return;
+      const b = incoming.agentsBoard[geoId] || {};
+      merged.agentsBoard[geoId] = b;
+      diff.agentsBoard.push({
+        geo: geoId,
+        sends: Array.isArray(b.sends) ? b.sends.length : 0,
+        tests: Array.isArray(b.tests) ? b.tests.length : 0
+      });
+    });
+  }
+
+  if (incoming.meta && incoming.meta.updated) merged.meta.updated = incoming.meta.updated;
 
   return { merged: merged, diff: diff };
 }
