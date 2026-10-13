@@ -1,4 +1,5 @@
 const L = require('../_lib');
+const seed = require('../../data/current.json');
 
 module.exports = async (req, res) => {
   res.setHeader('Cache-Control', 'no-store');
@@ -20,7 +21,8 @@ module.exports = async (req, res) => {
 
   try {
     const rawNow = await L.redis(['GET', L.KEY_CURRENT]);
-    const now = rawNow ? JSON.parse(rawNow) : { rev: 0, data: {}, geos: [], months: [], tournaments: {} };
+    // в Redis пусто — база это seed из репозитория (как в /api/data), иначе нечего сливать
+    const now = rawNow ? JSON.parse(rawNow) : { rev: 0, data: seed };
     const currentRev = now.rev || 0;
 
     // now хранит {rev, savedAt, data:{geos,months,data,tournaments,meta}} — берём вложенный дашборд
