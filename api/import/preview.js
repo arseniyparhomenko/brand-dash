@@ -1,4 +1,4 @@
-const L = require('./_lib');
+const L = require('../_lib');
 
 module.exports = async (req, res) => {
   res.setHeader('Cache-Control', 'no-store');
