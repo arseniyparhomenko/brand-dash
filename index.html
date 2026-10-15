@@ -486,6 +486,7 @@ function sendMode(){
   return (g&&g.sendMode)||'volume';
 }
 function unk(){ return '<span style="color:var(--ink-faint);font-size:12px">не известно</span>'; }
+// groups: [{key, rows}] — несколько массивов показываются одной таблицей (спорт и казино больше не делятся)
 function sendTable(title,key,rows,firstCol){
   var b=base(), cr=(sendMode()==='cr');
   var head = cr
@@ -543,6 +544,118 @@ function reactTable(rows){
     '</table></div><button class="btn addrow" data-add="reactivation">+ Добавить строку</button></div>';
 }
 
+function smmBlock(c){
+  var rows=c.smm||[];
+  if(!rows.length && !STATE.editing) return '';
+  var b=base();
+  var pm=prevData(), pSmm=(pm&&pm.smm)||[];
+  var M=[{k:'followers',l:'Подписчики'},{k:'reach',l:'Охват'},{k:'posts',l:'Постов'},
+         {k:'reactions',l:'Реакций'}];
+  var body=rows.map(function(x,i){
+    var rb=b+'.smm.'+i;
+    var prev=null;
+    (pSmm||[]).forEach(function(y){ if(y.network===x.network) prev=y; });
+    var cells=M.map(function(mt){
+      var o=x[mt.k]||{}, f=num(o.fact);
+      var pv=(prev&&prev[mt.k])?num(prev[mt.k].fact):null;
+      var d='';
+      if(typeof f==='number'&&typeof pv==='number'&&pv!==0){
+        var dp=(f-pv)/Math.abs(pv), a=Math.abs(dp)*100;
+        if(a<0.5) d='<span class="dmini flat">→</span>';
+        else d='<span class="dmini '+(dp>0?'up':'down')+'">'+(dp>0?'▲':'▼')+
+          (a<10?(Math.round(a*10)/10):Math.round(a))+'%</span>';
+      }
+      return '<td class="num">'+ed(rb+'.'+mt.k+'.fact',o.fact,'')+' '+d+'</td>';
+    }).join('');
+    return '<tr><td class="name">'+ed(rb+'.network',x.network,'text')+'</td>'+cells+
+      '<td><button class="rowdel" data-del="'+b+'.smm|'+i+'">×</button></td></tr>';
+  }).join('');
+  return '<div class="card full" style="margin-top:15px"><h3>СММ · '+esc(monthLabel(STATE.month))+'</h3>'+
+    '<div style="font-size:12px;color:var(--ink-faint);margin:-6px 0 10px">Факт за месяц. Стрелка — изменение к предыдущему месяцу</div>'+
+    '<div class="t-wrap"><table><thead><tr><th>Площадка</th>'+
+    M.map(function(mt){ return '<th class="num">'+esc(mt.l)+'</th>'; }).join('')+
+    '<th></th></tr></thead><tbody>'+
+    (body||'<tr><td colspan="6" class="empty">За месяц пусто — включите правку и добавьте площадку</td></tr>')+
+    '</tbody></table></div><button class="btn addrow" data-add="smm">+ Добавить площадку</button></div>';
+}
+
+
+function topSendsBlock(c){
+  var r=(c.retention||{}), T=r.topSends||{}, b=base();
+  var all=[];
+  ['pm','push','email'].forEach(function(k){
+    (T[k]||[]).forEach(function(o,i){
+      var dl=num(o.delivered), rd=num(o.read);
+      all.push({o:o, path:b+'.retention.topSends.'+k+'.'+i, del:b+'.retention.topSends.'+k+'|'+i,
+                or:(dl>0&&typeof rd==='number')?rd/dl:null});
+    });
+  });
+  if(!all.length && !STATE.editing) return '';
+  all.sort(function(a,z){ return (z.or||0)-(a.or||0); });
+  var body=all.slice(0,5).map(function(x,n){
+    var o=x.o, rb=x.path;
+    return '<tr><td class="num" style="color:var(--ink-faint)">'+(n+1)+'</td>'+
+      '<td>'+ed(rb+'.date',o.date,'text')+'</td>'+
+      '<td class="name">'+ed(rb+'.name',o.name,'text')+'</td>'+
+      '<td class="num">'+ed(rb+'.delivered',o.delivered,'')+'</td>'+
+      '<td class="num">'+ed(rb+'.read',o.read,'')+'</td>'+
+      '<td class="num"><b>'+(x.or==null?'—':fmt(x.or,'%'))+'</b></td>'+
+      '<td><button class="rowdel" data-del="'+x.del+'">×</button></td></tr>';
+  }).join('');
+  return '<div class="card full" style="margin-top:15px"><h3>ТОП-5 рассылок · '+esc(monthLabel(STATE.month))+'</h3>'+
+    '<div style="font-size:12px;color:var(--ink-faint);margin:-6px 0 10px">Все каналы вместе, по убыванию процента. Считается само: PM/Email — Open Rate (прочитано / доставлено), Push — CTR (клики / отправлено)</div>'+
+    '<div class="t-wrap"><table><thead><tr><th class="num">#</th><th>Дата</th><th>Кампания</th>'+
+    '<th class="num">Доставлено</th><th class="num">Прочитано / кликов</th><th class="num">OR / CTR</th><th></th></tr></thead><tbody>'+
+    (body||'<tr><td colspan="7" class="empty">Нет данных</td></tr>')+'</tbody></table></div>'+
+    '<button class="btn addrow" data-add="topsend:pm">+ Добавить рассылку</button></div>';
+}
+
+
+function retBlock(c){
+  var r=c.retention||{}, ss=r.sendStats||[], fn=r.funnel||[];
+  if(!ss.length && !fn.length && !STATE.editing) return '';
+  var b=base(), tS=0,tC=0;
+  var body=ss.map(function(x,i){
+    var sb=b+'.retention.sendStats.'+i;
+    var sent=num(x.sent), cl=num(x.clicks);
+    var cr=(sent>0&&typeof cl==='number')?cl/sent:null;
+    tS+=sent||0; tC+=cl||0;
+    return '<tr><td class="name">'+ed(sb+'.channel',x.channel,'text')+'</td>'+
+      '<td class="num">'+ed(sb+'.sent',x.sent,'')+'</td>'+
+      '<td class="num">'+ed(sb+'.clicks',x.clicks,'')+'</td>'+
+      '<td class="num">'+(cr==null?'—':fmt(cr,'%'))+'</td>'+
+      '<td><button class="rowdel" data-del="'+b+'.retention.sendStats|'+i+'">×</button></td></tr>';
+  }).join('');
+  var tCr = tS>0 ? tC/tS : null;
+
+  var html='<div class="card full" style="margin-top:15px"><h3>Ретеншен · '+esc(monthLabel(STATE.month))+'</h3>';
+  if(r.campaigns!=null||STATE.editing)
+    html+='<div style="font-size:13px;color:var(--ink-soft);margin:-6px 0 10px">Кампаний за месяц: <b>'+
+      ed(b+'.retention.campaigns',r.campaigns,'')+'</b></div>';
+  if(ss.length||STATE.editing){
+    html+='<div class="t-wrap"><table><thead><tr><th>Канал</th><th class="num">Отправлено</th>'+
+      '<th class="num">Кликов</th><th class="num">CR</th><th></th></tr></thead><tbody>'+
+      (body||'<tr><td colspan="5" class="empty">Нет данных по каналам</td></tr>')+'</tbody>'+
+      (ss.length?'<tfoot><tr><td>Итого</td><td class="num">'+fmt(tS,'')+'</td><td class="num">'+fmt(tC,'')+
+        '</td><td class="num">'+(tCr==null?'—':fmt(tCr,'%'))+'</td><td></td></tr></tfoot>':'')+
+      '</table></div><button class="btn addrow" data-add="sendstat">+ Добавить канал</button>';
+  }
+  if(fn.length){
+    html+='<div style="margin-top:14px"><div style="font-size:11px;font-weight:800;letter-spacing:.06em;'+
+      'text-transform:uppercase;color:var(--ink-faint);margin-bottom:6px">'+esc(r.funnelTitle||'Deposit Funnel')+'</div>'+
+      '<div class="t-wrap"><table><thead><tr>'+
+      fn.map(function(x){ return '<th class="num">'+esc(x.stage)+'</th>'; }).join('')+
+      '</tr></thead><tbody><tr>'+
+      fn.map(function(x,i){ return '<td class="num">'+ed(b+'.retention.funnel.'+i+'.value',x.value,'%')+'</td>'; }).join('')+
+      '</tr></tbody></table></div></div>';
+  }
+  if(r.base||STATE.editing)
+    html+='<div style="margin-top:10px;font-size:12.5px;color:var(--ink-faint);line-height:1.5">'+
+      ed(b+'.retention.base',r.base,'text')+'</div>';
+  return html+'</div>';
+}
+
+
 function secTotals(){
   var c=cur(), p=prevData();
   if(!c) return emptyMonth();
@@ -566,11 +679,12 @@ function secTotals(){
         : '')+'</div>';
   }).join('')+'</div>';
 
+  html+=smmBlock(c);
   html+=promoBlock();
 
-  html+=sendTable('ТОП отправки СПОРТ','topSport',c.topSport||[],'Отправка');
-  html+=sendTable('ТОП отправки КАЗИНО','topCasino',c.topCasino||[],'Отправка');
-  html+=reactTable(c.reactivation||[]);
+  html+=retBlock(c);
+
+  html+=topSendsBlock(c);
   return html;
 }
 
@@ -673,7 +787,7 @@ function promoBlock(){
   }).join('');
 
   var pm = win.length>1 ? win[win.length-2] : null;
-  var foot='<tr><td>Итого</td><td></td><td></td>'+win.map(function(mid,k){
+  var foot='<tr style="background:var(--accent-soft);font-weight:700"><td>Итого</td><td></td><td></td>'+win.map(function(mid,k){
     var du = (isCur(k)&&pm) ? dmini(tot[mid].u, tot[pm].u) : '';
     var doo= (isCur(k)&&pm) ? dmini(tot[mid].o, tot[pm].o) : '';
     return '<td class="'+c2(k)+'">'+fmt(tot[mid].u,'')+du+'</td>'+
@@ -695,25 +809,62 @@ function promoBlock(){
   return head+'<div class="card full"><h3>Промо-акции</h3>'+
     '<div style="font-size:12px;color:var(--ink-faint);margin:-6px 0 10px">Три месяца подряд, чтобы видеть движение. Сортировка — по участникам текущего месяца</div>'+
     '<div class="t-wrap"><table><thead>'+head1+head2+'</thead>'+
-    '<tbody>'+(body||'<tr><td colspan="'+(4+win.length*(two?2:1))+'" class="empty">Нет промо за период</td></tr>')+'</tbody>'+
-    '<tfoot>'+foot+'</tfoot></table></div>'+
+    '<tbody>'+foot+(body||'<tr><td colspan="'+(4+win.length*(two?2:1))+'" class="empty">Нет промо за период</td></tr>')+'</tbody>'+
+    '</table></div>'+
     '<button class="btn addrow" data-add="promo">+ Добавить промо в '+esc(monthLabel(cm))+'</button></div>';
+}
+
+function monthStartDate(mid){
+  var a=String(mid||'').split('-');
+  return new Date(+a[0], (+a[1]||1)-1, 1, 0,0,0);
+}
+
+function tournEnd(period){
+  var p=String(period||''); if(!p) return null;
+  var yDef = +String(STATE.month||'').slice(0,4) || new Date().getFullYear();
+  var re=/(\d{1,2})\.(\d{1,2})(?:\.(\d{4}))?/g, m, last=null, toks=[];
+  while((m=re.exec(p))){ last=m; toks.push(m); }
+  if(last){
+    var d=+last[1], mo=+last[2]-1, y=last[3]?+last[3]:null;
+    if(y===null){
+      var withYear=null;
+      toks.forEach(function(t){ if(t[3]) withYear=+t[3]; });
+      y = withYear!==null ? withYear : yDef;
+      if(toks.length>1 && (+toks[0][2]-1) > mo) y=y+1;
+    }
+    return new Date(y, mo, d, 23,59,59);
+  }
+  var MN=[['январ',0],['феврал',1],['март',2],['апрел',3],['мая',4],['май',4],['июн',5],
+          ['июл',6],['август',7],['сентябр',8],['октябр',9],['ноябр',10],['декабр',11]];
+  var low=p.toLowerCase(), yy=/(\d{4})/.exec(p); yy=yy?+yy[1]:yDef;
+  for(var i=0;i<MN.length;i++){
+    if(low.indexOf(MN[i][0])>=0) return new Date(yy, MN[i][1]+1, 0, 23,59,59);
+  }
+  return null;
 }
 
 function secTourn(){
   if(!D.tournaments) D.tournaments={};
   if(!D.tournaments[STATE.geo]) D.tournaments[STATE.geo]=[];
-  var rows=D.tournaments[STATE.geo], b='tournaments.'+STATE.geo;
+  var allRows=D.tournaments[STATE.geo], b='tournaments.'+STATE.geo;
   var ids=D.months.map(function(m){return m.id;});
   var cut=ids.indexOf(STATE.month);
   var win=ids.slice(0, cut<0?ids.length:cut+1).slice(-2);
+  var winStart=monthStartDate(win[0]), hidden=0;
+  var rows=[];
+  allRows.forEach(function(t,i){
+    var e=tournEnd(t.period);
+    if(e!==null && e<winStart){ hidden++; return; }
+    rows.push({t:t,i:i});
+  });
+  var tot={}; win.forEach(function(mid){ tot[mid]={p:0,u:0}; });
   var isCur=function(k){ return k===win.length-1; };
   var c1=function(k){ return 'mgrp mhead'+(isCur(k)?' mcur':''); };
   var c2=function(k){ return 'num mgrp'+(isCur(k)?' mcur':''); };
   var c3=function(k){ return 'num'+(isCur(k)?' mcur':''); };
   var prevMid = win.length>1 ? win[win.length-2] : null;
 
-  var html='<div class="sec-head"><h2>Казино</h2><div class="hint">Список турниров по гео. Участники — по месяцам, чтобы видеть, как идёт активность</div></div>';
+  var html='<div class="sec-head"><h2>Казино</h2><div class="hint">Список турниров по гео. Участники — по месяцам, чтобы видеть, как идёт активность. Завершённые до начала показанных месяцев скрываются сами — по полю «Период»</div></div>';
   html+='<div class="card full"><div class="t-wrap"><table><thead>'+
     '<tr><th rowspan="2">Турнир / активность</th><th rowspan="2">Период</th>'+
       win.map(function(mid,k){ return '<th class="'+c1(k)+'" colspan="2">'+esc(monthLabel(mid))+'</th>'; }).join('')+
@@ -721,13 +872,18 @@ function secTourn(){
     '<tr>'+win.map(function(mid,k){
       return '<th class="'+c2(k)+'">Участ.</th><th class="'+c3(k)+'">Использ.</th>';
     }).join('')+'</tr>'+
-    '</thead><tbody>'+
-    (rows.map(function(t,i){
+    '</thead>';
+  var body=(rows.map(function(r){
+      var t=r.t, i=r.i;
       var tb=b+'.'+i;
       var pbm=t.playersByMonth||{};
       var game=(t.game||STATE.editing)
         ? '<div style="font-size:12px;color:var(--ink-faint);margin-top:2px">'+ed(tb+'.game',t.game,'text')+'</div>' : '';
       var ubm=t.usesByMonth||{};
+      win.forEach(function(mid){
+        if(typeof pbm[mid]==='number') tot[mid].p+=pbm[mid];
+        if(typeof ubm[mid]==='number') tot[mid].u+=ubm[mid];
+      });
       var cells=win.map(function(mid,k){
         var v=pbm[mid], u=ubm[mid], dm='', du='';
         if(isCur(k)&&prevMid){
@@ -741,8 +897,21 @@ function secTourn(){
       return '<tr><td class="name">'+ed(tb+'.name',t.name,'text')+game+'</td>'+
         '<td>'+ed(tb+'.period',t.period,'text')+'</td>'+cells+
         '<td><button class="rowdel" data-del="'+b+'|'+i+'">×</button></td></tr>';
-    }).join('') || '<tr><td colspan="'+(3+win.length*2)+'" class="empty">Турниров пока нет</td></tr>')+
-    '</tbody></table></div><button class="btn addrow" data-add="tourn">+ Добавить турнир</button></div>';
+    }).join('') || '<tr><td colspan="'+(3+win.length*2)+'" class="empty">Турниров пока нет</td></tr>');
+  var foot = rows.length
+    ? '<tr style="background:var(--accent-soft);font-weight:700"><td>Итого участников за месяц</td><td></td>'+
+      win.map(function(mid,k){
+        var ok=isCur(k)&&prevMid;
+        var dp=(ok&&tot[mid].p&&tot[prevMid].p)?dmini(tot[mid].p, tot[prevMid].p):'';
+        var du=(ok&&tot[mid].u&&tot[prevMid].u)?dmini(tot[mid].u, tot[prevMid].u):'';
+        return '<td class="'+c2(k)+'">'+(tot[mid].p?fmt(tot[mid].p,''):'—')+dp+'</td>'+
+               '<td class="'+c3(k)+'">'+(tot[mid].u?fmt(tot[mid].u,''):'—')+du+'</td>';
+      }).join('')+'<td></td></tr>'
+    : '';
+  html+='<tbody>'+foot+body+'</tbody>'+
+    '</table></div><button class="btn addrow" data-add="tourn">+ Добавить турнир</button>'+
+    (hidden?'<div style="margin-top:8px;font-size:12px;color:var(--ink-faint)">Скрыто завершённых: '+hidden+'. Они остаются в данных — видно при переключении на их месяц</div>':'')+
+    '</div>';
   return html;
 }
 
@@ -1027,7 +1196,7 @@ function ensureMonth(){
   if(!D.data[STATE.geo]) D.data[STATE.geo]={};
   if(!D.data[STATE.geo][STATE.month]){
     D.data[STATE.geo][STATE.month]={totals:{},promos:[],tournaments:[]/*вход для импорта, не для ручной правки*/,
-      vip:{title:'ВИП рассылки',segments:[],notes:[]},agents:[],agentSends:[],agentTests:[],channels:[],topSport:[],topCasino:[],reactivation:[],
+      vip:{title:'ВИП рассылки',segments:[],notes:[]},agents:[],agentSends:[],agentTests:[],channels:[],smm:[],topSport:[],topCasino:[],reactivation:[],
       retention:{metrics:[],better:[],worse:[],hypotheses:[]},projects:[],plans:[]};
   }
   var c=D.data[STATE.geo][STATE.month];
@@ -1035,6 +1204,7 @@ function ensureMonth(){
   if(!c.vip.segments) c.vip.segments=[];
   if(!c.vip.notes) c.vip.notes=[];
   if(!c.agents) c.agents=[];
+  if(!c.smm) c.smm=[];
   if(!c.channels) c.channels=[];
   if(!c.topSport) c.topSport=[];
   if(!c.topCasino) c.topCasino=[];
@@ -1066,6 +1236,20 @@ function addItem(kind){
   }
   else if(kind==='proj') c.projects.push({title:'Новый проект',why:'',expected:'',result:'',change:'',status:'В работе'});
   else if(kind==='plan') c.plans.push({title:'Новая инициатива',why:'',expected:'',status:'План'});
+  else if(kind.indexOf('topsend:')===0){
+    var tk=kind.split(':')[1];
+    if(!c.retention) c.retention={};
+    if(!c.retention.topSends) c.retention.topSends={pm:[],push:[],email:[]};
+    if(!c.retention.topSends[tk]) c.retention.topSends[tk]=[];
+    c.retention.topSends[tk].push({date:'',name:'',delivered:null,read:null,clicks:null});
+  }
+  else if(kind==='sendstat'){
+    if(!c.retention) c.retention={};
+    if(!c.retention.sendStats) c.retention.sendStats=[];
+    c.retention.sendStats.push({channel:'',sent:null,clicks:null});
+  }
+  else if(kind==='smm') c.smm.push({network:'',followers:{plan:null,fact:null},reach:{plan:null,fact:null},
+      posts:{plan:null,fact:null},reactions:{plan:null,fact:null},er:{plan:null,fact:null}});
   else if(kind==='vipseg') c.vip.segments.push({name:'Новый сегмент',issued:0,used:0});
   else if(kind==='vipnote') c.vip.notes.push('Что менять');
   else if(kind==='channel') c.channels.push({channel:'Канал',metric:'Click Rate',value:null,delta:null});
@@ -1115,7 +1299,7 @@ function addMonthFlow(){
     D.geos.forEach(function(g){
       if(!D.data[g.id]) D.data[g.id]={};
       if(!D.data[g.id][id]) D.data[g.id][id]={totals:{},promos:[],tournaments:[]/*вход для импорта*/,
-        vip:{title:'ВИП рассылки',segments:[],notes:[]},agents:[],agentSends:[],agentTests:[],channels:[],topSport:[],topCasino:[],reactivation:[],
+        vip:{title:'ВИП рассылки',segments:[],notes:[]},agents:[],agentSends:[],agentTests:[],channels:[],smm:[],topSport:[],topCasino:[],reactivation:[],
         retention:{metrics:[],better:[],worse:[],hypotheses:[]},projects:[],plans:[]};
     });
     STATE.month=id; STATE.editing=true; markDirty(); render();
