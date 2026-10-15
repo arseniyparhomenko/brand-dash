@@ -935,7 +935,7 @@ function agentsBoard(){
 function secAgents(){
   var o=agentsBoard();
   var b='agentsBoard.'+STATE.geo;
-  var sends=o.sends, agents=o.legacy;
+  var agents=o.legacy;
   var R=o.reach, L=o.leads;
 
   var html='<div class="sec-head"><h2>Поиск агентов</h2><div class="hint">'+
@@ -1005,30 +1005,6 @@ function secAgents(){
   if(o.summary||STATE.editing){
     html+='<div class="card full"><h3>Вывод</h3><div style="font-size:13.5px;color:var(--ink-soft);line-height:1.5">'+ed(b+'.summary',o.summary,'text')+'</div></div>';
   }
-
-  // ---------- рассылки на лендинг агентов ----------
-  html+='<div class="sec-head" style="margin-top:26px"><h2>Рассылки на лендинг агентов</h2></div>'+
-    '<div class="card full"><div class="t-wrap"><table>'+
-    '<thead><tr><th>Дата</th><th class="num">Отправлено</th><th class="num">Доставлено</th>'+
-    '<th class="num">Перешли</th><th class="num">Ожид. CR</th><th class="num">Факт. CR</th>'+
-    '<th class="num">Регистраций</th><th class="num">Переход → рег</th><th>Ссылка</th><th>Комментарий</th><th></th></tr></thead><tbody>'+
-    (sends.map(function(x,i){
-      var sb=b+'.sends.'+i;
-      var c2=(num(x.clicks)>0)?(num(x.regs)||0)/num(x.clicks):null;
-      var lnk=x.link?'<a href="'+esc(x.link)+'" target="_blank" rel="noopener">'+esc(String(x.link).replace(/^https?:\/\//,''))+'</a>':'—';
-      return '<tr><td class="name">'+ed(sb+'.date',x.date,'text')+'</td>'+
-        '<td class="num">'+ed(sb+'.sent',x.sent,'')+'</td>'+
-        '<td class="num">'+ed(sb+'.delivered',x.delivered,'')+'</td>'+
-        '<td class="num">'+ed(sb+'.clicks',x.clicks,'')+'</td>'+
-        '<td class="num">'+ed(sb+'.crExpected',x.crExpected,'text')+'</td>'+
-        '<td class="num">'+ed(sb+'.crActual',x.crActual,'%')+'</td>'+
-        '<td class="num">'+ed(sb+'.regs',x.regs,'')+'</td>'+
-        '<td class="num">'+(c2==null?'—':fmt(c2,'%'))+'</td>'+
-        '<td>'+lnk+' <span class="only-edit">'+ed(sb+'.link',x.link,'text')+'</span></td>'+
-        '<td>'+ed(sb+'.note',x.note,'text')+'</td>'+
-        '<td><button class="rowdel" data-del="'+b+'.sends|'+i+'">×</button></td></tr>';
-    }).join('')||'<tr><td colspan="11" class="empty">Рассылок пока нет</td></tr>')+
-    '</tbody></table></div><button class="btn addrow" data-add="agentsend">+ Добавить рассылку</button></div>';
 
   if(agents.length){
     html+='<div class="sec-head" style="margin-top:26px"><h2>Прочие агентские рассылки</h2></div>';
