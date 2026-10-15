@@ -935,7 +935,7 @@ function agentsBoard(){
 function secAgents(){
   var o=agentsBoard();
   var b='agentsBoard.'+STATE.geo;
-  var sends=o.sends, tests=o.tests, agents=o.legacy;
+  var sends=o.sends, agents=o.legacy;
   var R=o.reach, L=o.leads;
 
   var html='<div class="sec-head"><h2>Поиск агентов</h2><div class="hint">'+
@@ -1029,46 +1029,6 @@ function secAgents(){
         '<td><button class="rowdel" data-del="'+b+'.sends|'+i+'">×</button></td></tr>';
     }).join('')||'<tr><td colspan="11" class="empty">Рассылок пока нет</td></tr>')+
     '</tbody></table></div><button class="btn addrow" data-add="agentsend">+ Добавить рассылку</button></div>';
-
-  // ---------- A/B тест офферов ----------
-  if(tests.length||STATE.editing){
-    html+='<div class="sec-head" style="margin-top:26px"><h2>A/B тест офферов по каналам</h2>'+
-      '<div class="hint">Click Rate по каждому каналу и итог по офферу</div></div>';
-    html+='<div class="stack">'+tests.map(function(t,i){
-      var tb=b+'.tests.'+i, chs=t.channels||[];
-      var c1=(num(t.clicks)>0)?(num(t.regs)||0)/num(t.clicks):null;
-      var c2=(num(t.regs)>0)?(num(t.ftd)||0)/num(t.regs):null;
-      var avg=(num(t.ftd)>0)?(num(t.ftdSum)||0)/num(t.ftd):null;
-      var lnk=t.link?'<a href="'+esc(t.link)+'" target="_blank" rel="noopener">ссылка</a>':'';
-      return '<div class="card full"><h3>'+ed(tb+'.name',t.name,'text')+' · '+ed(tb+'.date',t.date,'text')+
-        (lnk?' <span style="font-weight:400;font-size:12.5px">'+lnk+'</span>':'')+
-        ' <button class="rowdel" data-del="'+b+'.tests|'+i+'">×</button></h3>'+
-        '<div class="t-wrap"><table><thead><tr><th>Канал</th><th class="num">Доставлено</th><th class="num">Click Rate</th><th></th></tr></thead><tbody>'+
-        chs.map(function(ch,j){
-          var cb=tb+'.channels.'+j;
-          return '<tr><td class="name">'+ed(cb+'.name',ch.name,'text')+'</td>'+
-            '<td class="num">'+ed(cb+'.delivered',ch.delivered,'')+'</td>'+
-            '<td class="num">'+ed(cb+'.cr',ch.cr,'%')+'</td>'+
-            '<td><button class="rowdel" data-del="'+tb+'.channels|'+j+'">×</button></td></tr>';
-        }).join('')+'</tbody></table></div>'+
-        '<button class="btn addrow" data-add="testchannel:'+i+'">+ Канал</button>'+
-        (chs.length?'<div style="margin-top:12px">'+hbars(chs.map(function(ch){
-          return {name:ch.name, value: typeof ch.cr==='number' ? Math.round(ch.cr*10000)/100 : 0};
-        }),'var(--accent)')+'<div style="font-size:12px;color:var(--ink-faint)">Click Rate, %</div></div>':'')+
-        '<div class="kpis" style="margin-top:14px;margin-bottom:0">'+
-          '<div class="kpi"><div class="l">Переходов</div><div class="v">'+ed(tb+'.clicks',t.clicks,'')+'</div></div>'+
-          '<div class="kpi"><div class="l">Регистраций</div><div class="v">'+ed(tb+'.regs',t.regs,'')+'</div></div>'+
-          '<div class="kpi"><div class="l">FTD</div><div class="v">'+ed(tb+'.ftd',t.ftd,'')+'</div></div>'+
-          '<div class="kpi"><div class="l">Сумма депозитов</div><div class="v">'+ed(tb+'.ftdSum',t.ftdSum,'$')+'</div></div>'+
-          '<div class="kpi"><div class="l">Переход → рег</div><div class="v">'+(c1==null?'—':fmt(c1,'%'))+'</div></div>'+
-          '<div class="kpi"><div class="l">Рег → FTD</div><div class="v">'+(c2==null?'—':fmt(c2,'%'))+'</div></div>'+
-          '<div class="kpi"><div class="l">Средний FTD</div><div class="v">'+(avg==null?'—':fmt(Math.round(avg*100)/100,'$'))+'</div></div>'+
-        '</div>'+
-        '<div style="margin-top:12px;font-size:13px;color:var(--ink-soft)">'+ed(tb+'.note',t.note,'text')+'</div>'+
-      '</div>';
-    }).join('')+'</div>';
-    html+='<button class="btn addrow" data-add="agenttest" style="margin-top:12px">+ Добавить оффер</button>';
-  }
 
   if(agents.length){
     html+='<div class="sec-head" style="margin-top:26px"><h2>Прочие агентские рассылки</h2></div>';
