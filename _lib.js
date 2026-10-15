@@ -194,7 +194,9 @@ function planImport(current, incoming) {
       // Исключение — рассылки агентов: в новом формате они живут в agentsBoard, а не в месяце,
       // поэтому старые помесячные записи не стираем, если в файле этих полей нет.
       merged.data[geoId][monthId] = incMonth;
-      if (prevMonth) {
+      // если файл принёс agentsBoard для этого гео — старые помесячные рассылки больше не нужны
+      const hasBoard = !!(incoming.agentsBoard && incoming.agentsBoard[geoId]);
+      if (prevMonth && !hasBoard) {
         LEGACY_MONTH_KEYS.forEach(function (k) {
           if (incMonth[k] === undefined && prevMonth[k] !== undefined) incMonth[k] = prevMonth[k];
         });
