@@ -746,21 +746,107 @@ function secTourn(){
   return html;
 }
 
+function agentsBoard(){
+  if(!D.agentsBoard) D.agentsBoard={};
+  if(!D.agentsBoard[STATE.geo]) D.agentsBoard[STATE.geo]={};
+  var o=D.agentsBoard[STATE.geo];
+  ['sends','tests','legacy'].forEach(function(k){ if(!o[k]) o[k]=[]; });
+  ['period','reachNote','summary','leadsNote'].forEach(function(k){ if(typeof o[k]!=='string') o[k]=''; });
+  if(!o.reach) o.reach={};
+  if(!o.reach.ret) o.reach.ret={sent:null,cr:null};
+  ['smm','banner'].forEach(function(k){ if(!o.reach[k]) o.reach[k]={sent:null,clicks:null}; });
+  if(o.reach.retClicks===undefined) o.reach.retClicks=null;
+  if(!o.leads) o.leads={};
+  ['ret','banner','smm'].forEach(function(k){
+    if(!o.leads[k]) o.leads[k]={leads:null,joined:null,interested:null,notInterested:null,noResponse:null,invalid:null};
+  });
+  return o;
+}
+
 function secAgents(){
-  var c=cur(); if(!c) return emptyMonth();
-  var b=base(), sends=c.agentSends||[], tests=c.agentTests||[], agents=c.agents||[];
+  var o=agentsBoard();
+  var b='agentsBoard.'+STATE.geo;
+  var sends=o.sends, tests=o.tests, agents=o.legacy;
+  var R=o.reach, L=o.leads;
 
-  var html='<div class="sec-head"><h2>Агентские рассылки</h2><div class="hint">Конверсии и средний FTD считаются автоматически</div></div>';
+  var html='<div class="sec-head"><h2>Поиск агентов</h2><div class="hint">'+
+    esc(geoName(STATE.geo))+' · накопительная база, обновляется по мере новых рассылок · обновлено '+
+    ed(b+'.period',o.period,'text')+' — проценты и итоги считаются сами</div></div>';
 
-  // --- рассылки на лендинг агентов ---
-  html+='<div class="card full"><h3>Рассылки на лендинг агентов</h3><div class="t-wrap"><table>'+
+  // ---------- 1. охват и переходы ----------
+  var retSent=num(R.ret.sent)||0, retCr=num(R.ret.cr), retClicks=num(R.retClicks);
+  var smmSent=num(R.smm.sent), smmClicks=num(R.smm.clicks);
+  var banSent=num(R.banner.sent), banClicks=num(R.banner.clicks);
+  var allSent=retSent+(smmSent||0)+(banSent||0);
+  var allClicks=(retClicks||0)+(smmClicks||0)+(banClicks||0);
+  var retCrPct=(retSent>0&&typeof retCr==='number')?retCr/retSent:null;
+  var rb=b+'.reach.';
+  html+='<div class="card full"><h3>1. Охват и переходы · накопительно</h3><div class="t-wrap"><table>'+
+    '<thead><tr><th>Канал</th><th>Источник</th><th class="num">Отправлено / показы</th>'+
+    '<th class="num">CR (кол-во)</th><th class="num">CR %</th><th class="num">Переходы</th></tr></thead><tbody>'+
+    '<tr><td class="name">Ретеншен</td><td>PM + Push + Email</td>'+
+      '<td class="num">'+ed(rb+'ret.sent',R.ret.sent,'')+'</td>'+
+      '<td class="num">'+ed(rb+'ret.cr',R.ret.cr,'')+'</td>'+
+      '<td class="num">'+(retCrPct==null?'—':fmt(retCrPct,'%'))+'</td>'+
+      '<td class="num">'+ed(rb+'retClicks',R.retClicks,'')+'</td></tr>'+
+    '<tr><td class="name">СММ</td><td>Просмотры постов / клики</td>'+
+      '<td class="num">'+ed(rb+'smm.sent',R.smm.sent,'')+'</td><td class="num">—</td><td class="num">—</td>'+
+      '<td class="num">'+ed(rb+'smm.clicks',R.smm.clicks,'')+'</td></tr>'+
+    '<tr><td class="name">Баннер на сайте</td><td>Показы / клики</td>'+
+      '<td class="num">'+ed(rb+'banner.sent',R.banner.sent,'')+'</td><td class="num">—</td><td class="num">—</td>'+
+      '<td class="num">'+ed(rb+'banner.clicks',R.banner.clicks,'')+'</td></tr>'+
+    '</tbody><tfoot><tr><td>ИТОГО</td><td></td><td class="num">'+(allSent?fmt(allSent,''):'—')+'</td>'+
+      '<td></td><td></td><td class="num">'+(allClicks?fmt(allClicks,''):'—')+'</td></tr></tfoot></table></div>'+
+    ((o.reachNote||STATE.editing)?'<div style="margin-top:10px;font-size:12.5px;color:var(--ink-soft)">'+ed(b+'.reachNote',o.reachNote,'text')+'</div>':'')+
+    '</div>';
+
+  // ---------- 2. лиды и результат ----------
+  var clicksOf={ret:retClicks, banner:banClicks, smm:smmClicks};
+  var T={leads:0,joined:0,interested:0,notInterested:0,noResponse:0,invalid:0,nostatus:0,clicks:0};
+  var leadRow=function(key,label){
+    var x=L[key], lb=b+'.leads.'+key;
+    var lead=num(x.leads)||0, j=num(x.joined)||0, i1=num(x.interested)||0, n1=num(x.notInterested)||0,
+        nr=num(x.noResponse)||0, iv=num(x.invalid)||0;
+    var nostatus=lead?Math.max(0,lead-(j+i1+n1+nr+iv)):0;
+    var p1=lead>0?j/lead:null, cl=clicksOf[key], p2=(cl&&lead)?lead/cl:null;
+    T.leads+=lead; T.joined+=j; T.interested+=i1; T.notInterested+=n1; T.noResponse+=nr; T.invalid+=iv; T.nostatus+=nostatus;
+    if(cl) T.clicks+=cl;
+    return '<tr><td class="name">'+esc(label)+'</td>'+
+      ['leads','joined','interested','notInterested','noResponse','invalid'].map(function(f){
+        return '<td class="num">'+ed(lb+'.'+f,x[f],'')+'</td>'; }).join('')+
+      '<td class="num">'+(lead?fmt(nostatus,''):'—')+'</td>'+
+      '<td class="num">'+(p1==null?'—':fmt(p1,'%'))+'</td>'+
+      '<td class="num">'+(p2==null?'—':fmt(p2,'%'))+'</td></tr>';
+  };
+  var lbody=leadRow('ret','Ретеншен')+leadRow('banner','Баннер на сайте')+leadRow('smm','СММ');
+  var t1=T.leads>0?T.joined/T.leads:null, t2=(T.clicks&&T.leads)?T.leads/T.clicks:null;
+  html+='<div class="card full"><h3>2. Лиды и результат · накопительно, по базе лидов</h3>'+
+    '<div class="t-wrap"><table><thead><tr><th>Канал</th><th class="num">Лидов</th>'+
+    '<th class="num">Joined as partner</th><th class="num">Interested</th><th class="num">Not interested</th>'+
+    '<th class="num">No response</th><th class="num">Invalid contacts</th><th class="num">Без статуса</th>'+
+    '<th class="num">% лид → партнёр</th><th class="num">% переход → лид</th></tr></thead><tbody>'+
+    lbody+'</tbody><tfoot><tr><td>ИТОГО</td>'+
+      [T.leads,T.joined,T.interested,T.notInterested,T.noResponse,T.invalid,T.nostatus].map(function(v){
+        return '<td class="num">'+fmt(v,'')+'</td>'; }).join('')+
+      '<td class="num">'+(t1==null?'—':fmt(t1,'%'))+'</td>'+
+      '<td class="num">'+(t2==null?'—':fmt(t2,'%'))+'</td></tr></tfoot></table></div>'+
+    '<div style="margin-top:10px;font-size:12.5px;color:var(--ink-faint)">«Без статуса» считается само: лиды минус все статусы. Цель — 0. Если больше 0, в таблице лидов есть необработанные строки.</div>'+
+    ((o.leadsNote||STATE.editing)?'<div style="margin-top:8px;font-size:12.5px;color:var(--ink-soft)">'+ed(b+'.leadsNote',o.leadsNote,'text')+'</div>':'')+'</div>';
+
+  if(o.summary||STATE.editing){
+    html+='<div class="card full"><h3>Вывод</h3><div style="font-size:13.5px;color:var(--ink-soft);line-height:1.5">'+ed(b+'.summary',o.summary,'text')+'</div></div>';
+  }
+
+  // ---------- рассылки на лендинг агентов ----------
+  html+='<div class="sec-head" style="margin-top:26px"><h2>Рассылки на лендинг агентов</h2></div>'+
+    '<div class="card full"><div class="t-wrap"><table>'+
     '<thead><tr><th>Дата</th><th class="num">Отправлено</th><th class="num">Доставлено</th>'+
     '<th class="num">Перешли</th><th class="num">Ожид. CR</th><th class="num">Факт. CR</th>'+
     '<th class="num">Регистраций</th><th class="num">Переход → рег</th><th>Ссылка</th><th>Комментарий</th><th></th></tr></thead><tbody>'+
     (sends.map(function(x,i){
-      var sb=b+'.agentSends.'+i;
-      var c2 = (num(x.clicks)>0) ? (num(x.regs)||0)/num(x.clicks) : null;
-      var lnk = x.link ? '<a href="'+esc(x.link)+'" target="_blank" rel="noopener">'+esc(String(x.link).replace(/^https?:\/\//,''))+'</a>' : '—';
+      var sb=b+'.sends.'+i;
+      var c2=(num(x.clicks)>0)?(num(x.regs)||0)/num(x.clicks):null;
+      var lnk=x.link?'<a href="'+esc(x.link)+'" target="_blank" rel="noopener">'+esc(String(x.link).replace(/^https?:\/\//,''))+'</a>':'—';
       return '<tr><td class="name">'+ed(sb+'.date',x.date,'text')+'</td>'+
         '<td class="num">'+ed(sb+'.sent',x.sent,'')+'</td>'+
         '<td class="num">'+ed(sb+'.delivered',x.delivered,'')+'</td>'+
@@ -771,24 +857,23 @@ function secAgents(){
         '<td class="num">'+(c2==null?'—':fmt(c2,'%'))+'</td>'+
         '<td>'+lnk+' <span class="only-edit">'+ed(sb+'.link',x.link,'text')+'</span></td>'+
         '<td>'+ed(sb+'.note',x.note,'text')+'</td>'+
-        '<td><button class="rowdel" data-del="'+b+'.agentSends|'+i+'">×</button></td></tr>';
-    }).join('') || '<tr><td colspan="11" class="empty">Рассылок за месяц нет</td></tr>')+
+        '<td><button class="rowdel" data-del="'+b+'.sends|'+i+'">×</button></td></tr>';
+    }).join('')||'<tr><td colspan="11" class="empty">Рассылок пока нет</td></tr>')+
     '</tbody></table></div><button class="btn addrow" data-add="agentsend">+ Добавить рассылку</button></div>';
 
-  // --- A/B тест офферов по каналам ---
+  // ---------- A/B тест офферов ----------
   if(tests.length||STATE.editing){
     html+='<div class="sec-head" style="margin-top:26px"><h2>A/B тест офферов по каналам</h2>'+
       '<div class="hint">Click Rate по каждому каналу и итог по офферу</div></div>';
     html+='<div class="stack">'+tests.map(function(t,i){
-      var tb=b+'.agentTests.'+i;
-      var chs=t.channels||[];
-      var c1 = (num(t.clicks)>0) ? (num(t.regs)||0)/num(t.clicks) : null;
-      var c2 = (num(t.regs)>0) ? (num(t.ftd)||0)/num(t.regs) : null;
-      var avg = (num(t.ftd)>0) ? (num(t.ftdSum)||0)/num(t.ftd) : null;
-      var lnk = t.link ? '<a href="'+esc(t.link)+'" target="_blank" rel="noopener">ссылка</a>' : '';
+      var tb=b+'.tests.'+i, chs=t.channels||[];
+      var c1=(num(t.clicks)>0)?(num(t.regs)||0)/num(t.clicks):null;
+      var c2=(num(t.regs)>0)?(num(t.ftd)||0)/num(t.regs):null;
+      var avg=(num(t.ftd)>0)?(num(t.ftdSum)||0)/num(t.ftd):null;
+      var lnk=t.link?'<a href="'+esc(t.link)+'" target="_blank" rel="noopener">ссылка</a>':'';
       return '<div class="card full"><h3>'+ed(tb+'.name',t.name,'text')+' · '+ed(tb+'.date',t.date,'text')+
         (lnk?' <span style="font-weight:400;font-size:12.5px">'+lnk+'</span>':'')+
-        ' <button class="rowdel" data-del="'+b+'.agentTests|'+i+'">×</button></h3>'+
+        ' <button class="rowdel" data-del="'+b+'.tests|'+i+'">×</button></h3>'+
         '<div class="t-wrap"><table><thead><tr><th>Канал</th><th class="num">Доставлено</th><th class="num">Click Rate</th><th></th></tr></thead><tbody>'+
         chs.map(function(ch,j){
           var cb=tb+'.channels.'+j;
@@ -822,14 +907,14 @@ function secAgents(){
       '<thead><tr><th>Рассылка</th><th class="num">Переходов</th><th class="num">Регистраций</th>'+
       '<th class="num">FTD</th><th class="num">Сумма FTD</th><th>Вывод</th><th></th></tr></thead><tbody>'+
       agents.map(function(a,i){
-        var ab=b+'.agents.'+i;
+        var ab=b+'.legacy.'+i;
         return '<tr><td class="name">'+ed(ab+'.name',a.name,'text')+'</td>'+
           '<td class="num">'+ed(ab+'.clicks',a.clicks,'')+'</td>'+
           '<td class="num">'+ed(ab+'.regs',a.regs,'')+'</td>'+
           '<td class="num">'+ed(ab+'.ftd',a.ftd,'')+'</td>'+
           '<td class="num">'+ed(ab+'.ftdSum',a.ftdSum,'$')+'</td>'+
           '<td>'+ed(ab+'.note',a.note,'text')+'</td>'+
-          '<td><button class="rowdel" data-del="'+b+'.agents|'+i+'">×</button></td></tr>';
+          '<td><button class="rowdel" data-del="'+b+'.legacy|'+i+'">×</button></td></tr>';
       }).join('')+'</tbody></table></div></div>';
   }
   return html;
@@ -987,13 +1072,13 @@ function addItem(kind){
   else if(kind==='topSport') c.topSport.push({name:'',channel:'',sent:null,cr:null,clicks:null,pm:null,push:null,emailOR:null,emailCR:null});
   else if(kind==='topCasino') c.topCasino.push({name:'',channel:'',sent:null,cr:null,clicks:null,pm:null,push:null,emailOR:null,emailCR:null});
   else if(kind==='reactivation') c.reactivation.push({vertical:'',segment:'10+',inactivity:'',base:null,activated:null,ctr:null,arppu:null,profit:null});
-  else if(kind==='agent') c.agents.push({name:'Новая рассылка',clicks:0,regs:0,ftd:0,ftdSum:0,note:''});
-  else if(kind==='agentsend') c.agentSends.push({date:'',sent:null,delivered:null,clicks:null,crExpected:'',crActual:null,link:'',regs:null,note:''});
-  else if(kind==='agenttest') c.agentTests.push({name:'Новый оффер',date:'',link:'',channels:[{name:'PM',delivered:null,cr:null}],clicks:null,regs:null,ftd:null,ftdSum:null,note:''});
+  else if(kind==='agent') agentsBoard().legacy.push({name:'Новая рассылка',clicks:0,regs:0,ftd:0,ftdSum:0,note:''});
+  else if(kind==='agentsend') agentsBoard().sends.push({date:'',sent:null,delivered:null,clicks:null,crExpected:'',crActual:null,link:'',regs:null,note:''});
+  else if(kind==='agenttest') agentsBoard().tests.push({name:'Новый оффер',date:'',link:'',channels:[{name:'PM',delivered:null,cr:null}],clicks:null,regs:null,ftd:null,ftdSum:null,note:''});
   else if(kind.indexOf('testchannel:')===0){
-    var ti=parseInt(kind.split(':')[1],10);
-    if(c.agentTests[ti]){ if(!c.agentTests[ti].channels) c.agentTests[ti].channels=[];
-      c.agentTests[ti].channels.push({name:'Канал',delivered:null,cr:null}); }
+    var ti=parseInt(kind.split(':')[1],10), tl=agentsBoard().tests;
+    if(tl[ti]){ if(!tl[ti].channels) tl[ti].channels=[];
+      tl[ti].channels.push({name:'Канал',delivered:null,cr:null}); }
   }
   STATE.editing=true; markDirty(); render();
 }
