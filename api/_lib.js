@@ -174,7 +174,8 @@ function planImport(current, incoming) {
     if (!g || !g.id || !/^[a-z]{2,4}$/.test(g.id)) return;
     if (merged.geos.some(function (x) { return x.id === g.id; })) return;
     if (!incoming.data || !incoming.data[g.id]) return;
-    merged.geos.push({ id: g.id, name: g.name || g.id.toUpperCase(), col2: g.col2 || '', sendMode: g.sendMode || 'volume' });
+    merged.geos.push({ id: g.id, name: g.name || g.id.toUpperCase(), col2: g.col2 || '', sendMode: g.sendMode || 'volume',
+      firstMonth: Object.keys(incoming.data[g.id]).sort().pop() }); // новое гео видно с последнего месяца файла
     newGeos.push(g.id);
   });
   const knownGeoIds = merged.geos.map(function (g) { return g.id; });

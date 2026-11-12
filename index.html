@@ -354,9 +354,17 @@ function cur(){
   var g=D.data[STATE.geo]||{}; 
   return g[STATE.month] || null;
 }
+/* месяцы, видимые для гео: новые гео (Судан, Джибути) показываются только с месяца запуска */
+var GEO_FIRST_MONTH={sd:'2026-10',dj:'2026-10'};
+function geoMonths(geoId){
+  var g=D.geos.filter(function(x){return x.id===geoId;})[0];
+  var first=(g&&g.firstMonth)||GEO_FIRST_MONTH[geoId]||null;
+  return D.months.filter(function(m){ return !first || m.id>=first; });
+}
 function prevMonthId(){
-  var i=D.months.map(function(m){return m.id;}).indexOf(STATE.month);
-  return i>0 ? D.months[i-1].id : null;
+  var ms=geoMonths(STATE.geo);
+  var i=ms.map(function(m){return m.id;}).indexOf(STATE.month);
+  return i>0 ? ms[i-1].id : null;
 }
 function prevData(){
   var pm=prevMonthId(); if(!pm) return null;
@@ -660,7 +668,7 @@ function secTotals(){
   var c=cur(), p=prevData();
   if(!c) return emptyMonth();
   var html='<div class="sec-head"><h2>Main Board</h2><div class="hint">'+esc(geoName(STATE.geo))+' · '+esc(monthLabel(STATE.month))+(p?' · сравнение с '+esc(monthLabel(prevMonthId())):'')+'</div></div>';
-  var ids=D.months.map(function(m){ return m.id; });
+  var ids=geoMonths(STATE.geo).map(function(m){ return m.id; });
   var cut=ids.indexOf(STATE.month);
   html+='<div class="kpis">'+TOTAL_FIELDS.map(function(f){
     var v=c.totals?c.totals[f.k]:null, pv=null, pvMid=null;
@@ -705,7 +713,7 @@ function col2(){
   return (g && typeof g.col2==='string') ? g.col2 : 'Клики';
 }
 function promoBlock(){
-  var ids=D.months.map(function(m){return m.id;});
+  var ids=geoMonths(STATE.geo).map(function(m){return m.id;});
   var cutoff=ids.indexOf(STATE.month);
   var win=ids.slice(0, cutoff<0?ids.length:cutoff+1).slice(-3);
   var geo=D.data[STATE.geo]||{};
@@ -847,7 +855,7 @@ function secTourn(){
   if(!D.tournaments) D.tournaments={};
   if(!D.tournaments[STATE.geo]) D.tournaments[STATE.geo]=[];
   var allRows=D.tournaments[STATE.geo], b='tournaments.'+STATE.geo;
-  var ids=D.months.map(function(m){return m.id;});
+  var ids=geoMonths(STATE.geo).map(function(m){return m.id;});
   var cut=ids.indexOf(STATE.month);
   var win=ids.slice(0, cut<0?ids.length:cut+1).slice(-2);
   var winStart=monthStartDate(win[0]), hidden=0;
@@ -1042,7 +1050,9 @@ function renderShell(){
     return '<button data-geo="'+esc(g.id)+'" class="'+(g.id===STATE.geo?'on':'')+'">'+esc(g.name)+'</button>';
   }).join('');
   var mseg=document.getElementById('monthSeg');
-  mseg.innerHTML = D.months.map(function(m){
+  var gms=geoMonths(STATE.geo);
+  if(gms.length && !gms.some(function(m){return m.id===STATE.month;})) STATE.month=gms[gms.length-1].id;
+  mseg.innerHTML = gms.map(function(m){
     return '<button data-month="'+esc(m.id)+'" title="'+esc(m.label)+'" class="'+(m.id===STATE.month?'on':'')+'">'+esc(monthShort(m.id))+'</button>';
   }).join('');
   var onBtn=mseg.querySelector('button.on');
