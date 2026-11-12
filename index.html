@@ -1510,6 +1510,9 @@ function renderImportDiff(token, diff){
       return '<li>'+esc(a.geo.toUpperCase())+': база заменится целиком (рассылок '+a.sends+', тестов '+a.tests+')</li>';
     }).join('')+'</ul>';
   }
+  if(diff.newGeos && diff.newGeos.length){
+    body+='<h4>Новые гео</h4><div class="modal-sub">Будут добавлены: '+diff.newGeos.map(function(g){return esc(g.toUpperCase());}).join(', ')+'</div>';
+  }
   if(diff.unknownGeos && diff.unknownGeos.length){
     body+='<h4>Не понял</h4><div class="modal-warn">Гео "'+esc(diff.unknownGeos.join(', '))+'" нет в дашборде — эти данные пропущены.</div>';
   }

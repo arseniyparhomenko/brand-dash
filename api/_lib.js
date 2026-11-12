@@ -168,10 +168,19 @@ function planImport(current, incoming) {
   merged.meta.tournamentSeq = merged.meta.tournamentSeq || {};
   merged.tournaments = merged.tournaments || {};
 
+  // новые гео (например sd, dj): если файл принёс описание гео и данные по нему — заводим гео в дашборде
+  const newGeos = [];
+  (incoming.geos || []).forEach(function (g) {
+    if (!g || !g.id || !/^[a-z]{2,4}$/.test(g.id)) return;
+    if (merged.geos.some(function (x) { return x.id === g.id; })) return;
+    if (!incoming.data || !incoming.data[g.id]) return;
+    merged.geos.push({ id: g.id, name: g.name || g.id.toUpperCase(), col2: g.col2 || '', sendMode: g.sendMode || 'volume' });
+    newGeos.push(g.id);
+  });
   const knownGeoIds = merged.geos.map(function (g) { return g.id; });
   const monthIndex = {}; merged.months.forEach(function (m, i) { monthIndex[m.id] = i; });
 
-  const diff = { months: [], warnings: [], tournaments: {}, newTournaments: [], agentsBoard: [], unknownGeos: [] };
+  const diff = { months: [], warnings: [], tournaments: {}, newTournaments: [], agentsBoard: [], unknownGeos: [], newGeos: newGeos };
 
   const incomingGeoIds = Object.keys(incoming.data || {});
   incomingGeoIds.forEach(function (geoId) {
