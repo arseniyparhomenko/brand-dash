@@ -19,6 +19,8 @@
     --radius:13px;
   }
   body.geo-mm{ --accent:#b0552b; --accent-soft:rgba(176,85,43,.10); }
+  body.geo-sd{ --accent:#2f7a68; --accent-soft:rgba(47,122,104,.10); }
+  body.geo-dj{ --accent:#5a5ba8; --accent-soft:rgba(90,91,168,.10); }
   *{box-sizing:border-box;}
   html,body{margin:0;background:var(--bg);color:var(--ink);
     font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
@@ -297,11 +299,11 @@ var RETRY = 0;
 var CHANGE_SEQ = 0;    /* счётчик правок — ловит те, что сделаны во время отправки */
 var STORAGE_OK = true; /* подключено ли хранилище */
 var COLORS = ['var(--accent)','var(--s2)','var(--s3)','var(--s4)','var(--s5)'];
-var STATE = { geo: null, month: null, tab: 'totals', editing:false };
+var STATE = { geo: null, month: null, tab: 'totals', editing:false, promoOpen:false, casinoOpen:false };
 
 var TABS = [
   {id:'totals',   name:'Main Board'},
-  {id:'tourn',    name:'Казино'},
+  {id:'retboard', name:'Main Board Retention'},
   {id:'agents',   name:'Агенты',  geos:['mm']}
 ];
 
@@ -312,11 +314,16 @@ var TOTAL_FIELDS = [
   {k:'usersCasino',     l:'Юзеры КАЗИНО',        unit:''},
   {k:'usersDeposit',    l:'Юзеров с депозитами', unit:''},
   {k:'depositsTotal',   l:'Депозитов всего',     unit:''},
-  {k:'retentionRate',   l:'Retention Rate',      unit:'%'},
   {k:'newRegistrations',l:'New registrations',   unit:''},
+  {k:'reg2dep',         l:'Конверсия в депозит', unit:'%',
+   calc:function(mo){
+     var v=(mo&&mo.retBoard)?mo.retBoard.reg2dep:null;
+     return (typeof v==='number')?v:null;
+   }},
   {k:'reactivated',     l:'Реактивировано юзеров', unit:''}
 ];
 
+/* ---------- helpers ---------- */
 /* ---------- helpers ---------- */
 function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){
   return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
@@ -392,9 +399,16 @@ function ed(path,value,unit,cls){
   var type = isText ? 'text' : (unit==='%' ? 'pct' : 'num');
   return '<span data-path="'+esc(path)+'" data-type="'+type+'" class="'+(cls||'')+'">'+disp+'</span>';
 }
-function delta(c,p,better){
+function delta(c,p,better,pp){
   if(typeof c!=='number'||typeof p!=='number'||p===0) return '';
-  var dp=(c-p)/Math.abs(p), up=c>=p, good = better==='down' ? !up : up;
+  var up=c>=p, good = better==='down' ? !up : up;
+  if(pp){
+    var d1=(c-p)*100, fl1=Math.abs(d1)<0.005;
+    var cl1=fl1?'flat':(good?'up':'down'), a1=fl1?'→':(up?'▲':'▼');
+    if(fl1) return '<div class="d flat">→ без изменений</div>';
+    return '<div class="d '+cl1+'">'+a1+' '+Math.abs(d1).toFixed(2).replace(/0+$/,'').replace(/\.$/,'')+' п.п.</div>';
+  }
+  var dp=(c-p)/Math.abs(p);
   var flat=Math.abs(dp)<0.001, cls=flat?'flat':(good?'up':'down'), ar=flat?'→':(up?'▲':'▼');
   var dv=(Math.abs(dp)*100).toFixed(1).replace(/\.0$/,'');
   return '<div class="d '+cls+'">'+ar+' '+dv+'%</div>';
@@ -664,6 +678,275 @@ function retBlock(c){
 }
 
 
+function reactFinBlock(c){
+  var f=c.reactFin, b=base();
+  if((!f || (f.extra==null && f.bonus==null)) && !STATE.editing) return '';
+  f=f||{};
+  var pm=prevData(), pf=(pm&&pm.reactFin)||{};
+  var ex=num(f.extra), bo=num(f.bonus);
+  var net=(typeof ex==='number'&&typeof bo==='number')?ex-bo:null;
+  var pex=num(pf.extra), pbo=num(pf.bonus);
+  var pnet=(typeof pex==='number'&&typeof pbo==='number')?pex-pbo:null;
+  var roi=(typeof net==='number'&&bo>0)?net/bo:null;
+  var proi=(typeof pnet==='number'&&pbo>0)?pnet/pbo:null;
+  var tile=function(label,inner,d){
+    return '<div style="flex:1;min-width:160px;padding:10px 12px;border:1px solid var(--line);border-radius:10px">'+
+      '<div style="font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-faint)">'+esc(label)+'</div>'+
+      '<div style="font-size:21px;font-weight:700;margin-top:3px">'+inner+(d||'')+'</div></div>';
+  };
+  return '<div class="card full" style="margin-top:15px"><h3>Реактивация · финансовый результат · '+esc(monthLabel(STATE.month))+'</h3>'+
+    '<div style="display:flex;gap:10px;flex-wrap:wrap">'+
+      tile('ExtraProfit', ed(b+'.reactFin.extra',f.extra,''), dmini(ex,pex))+
+      tile('Bonus Cost',  ed(b+'.reactFin.bonus',f.bonus,''), dmini(bo,pbo))+
+      tile('Net Profit',  (net==null?'—':fmt(net,'')), dmini(net,pnet))+
+      tile('ROI бонуса',  (roi==null?'—':fmt(roi,'%')), dmini(roi,proi))+
+    '</div>'+
+    '<div style="margin-top:10px;font-size:12.5px;color:var(--ink-faint)">Net Profit и ROI считаются сами: ExtraProfit минус Bonus Cost; ROI — Net Profit / Bonus Cost. Вводишь только две верхние цифры.</div></div>';
+}
+
+var RB_FIELDS = [
+  {l:'MAU, все игроки',           path:'retBoard.mau',       kind:'num'},
+  {l:'Удержание (RR), все игроки',path:'totals.retentionRate',kind:'pp'},
+  {l:'MAU новых игроков',         path:'retBoard.mauNew',    kind:'num'},
+  {l:'Регистрации',               path:'retBoard.regs',      kind:'num'},
+  {l:'Конверсия в депозит',       path:'retBoard.reg2dep',   kind:'pp'},
+  {l:'Повторные депозиты',        path:'retBoard.repeatDep', kind:'pp'},
+  {l:'Проходимость депозитов',    path:'retBoard.depPass',   kind:'pp'},
+  {l:'Время до первого депозита', path:'retBoard.ttfdMin',   kind:'time', worseUp:true},
+  {l:'Кампаний за месяц',         path:'retBoard.campaigns', kind:'num'},
+  {l:'Click Rate ЛС',             path:'retBoard.clickLS',   kind:'pp'},
+  {l:'Click Rate Push',           path:'retBoard.clickPush', kind:'pp'},
+  {l:'Open Rate Email',           path:'retBoard.orEmail',   kind:'pp'},
+  {l:'Click Rate Email',          path:'retBoard.clickEmail',kind:'pp'},
+  {l:'Churn — отток юзеров',      path:'retBoard.churn',     kind:'pp', worseUp:true}
+];
+
+function hhmm(min){
+  if(typeof min!=='number'||isNaN(min)) return '—';
+  var neg=min<0; min=Math.abs(min);
+  var hh=Math.floor(min/60), mm=Math.round(min%60);
+  if(mm===60){ hh++; mm=0; }
+  var s=(hh? hh+' ч ' : '')+(hh&&mm<10?'0'+mm:mm)+' м';
+  return (neg?'−':'')+s;
+}
+
+function digPath(o,path){
+  var parts=path.split('.');
+  for(var i=0;i<parts.length;i++){ if(o==null) return null; o=o[parts[i]]; }
+  return (typeof o==='number')?o:null;
+}
+
+function rbPill(txt,good){
+  var col = good===null ? 'var(--ink-faint)' : (good?'var(--up)':'var(--amber)');
+  var bg  = good===null ? 'rgba(123,117,112,.12)' : (good?'rgba(26,122,74,.12)':'rgba(180,118,46,.14)');
+  return '<span style="display:inline-block;margin-top:7px;padding:3px 9px;border-radius:999px;'+
+    'font-size:11.5px;font-weight:700;color:'+col+';background:'+bg+'">'+esc(txt)+'</span>';
+}
+
+function secRetBoard(){
+  var c=cur(), pm=prevData(), pmid=prevMonthId();
+  if(!c) return emptyMonth();
+  var b=base(), any=false;
+
+  var cards=RB_FIELDS.map(function(f){
+    var v=digPath(c,f.path), pv=pm?digPath(pm,f.path):null;
+    if(v==null && !STATE.editing) return '';
+    any=true;
+    var shown = f.kind==='time' ? (v==null?'—':hhmm(v))
+              : f.kind==='pp'   ? ed(b+'.'+f.path, v, '%')
+              :                   ed(b+'.'+f.path, v, '');
+    if(f.kind==='time' && STATE.editing) shown = ed(b+'.'+f.path, v, '')+' <span style="font-size:12px;color:var(--ink-faint)">мин</span>';
+
+    var was='', pillHtml='';
+    if(typeof pv==='number'){
+      was='<div class="pv">было '+(f.kind==='time'?hhmm(pv):fmt(pv,f.kind==='pp'?'%':''))+'</div>';
+      if(typeof v==='number'){
+        var good=null, txt='';
+        if(f.kind==='pp'){
+          var dpp=(v-pv)*100;
+          good = f.worseUp ? dpp<0 : dpp>0;
+          if(Math.abs(dpp)<0.005){ good=null; txt='без изменений'; }
+          else txt=(dpp>0?'+':'−')+Math.abs(dpp).toFixed(2).replace(/0+$/,'').replace(/\.$/,'')+' п.п. · '+(dpp>0?'рост':'снижение');
+        } else if(f.kind==='time'){
+          var dm=v-pv;
+          good = dm<0;
+          if(dm===0){ good=null; txt='без изменений'; }
+          else txt=(dm>0?'+':'−')+hhmm(Math.abs(dm))+' · '+(good?'лучше':'хуже');
+        } else {
+          if(pv===0){ txt='новое'; good=null; }
+          else {
+            var dp=(v-pv)/pv*100;
+            good = f.worseUp ? dp<0 : dp>0;
+            if(Math.abs(dp)<0.05){ good=null; txt='без изменений'; }
+            else txt=(dp>0?'+':'−')+Math.abs(dp).toFixed(1).replace(/\.0$/,'')+'% · '+(dp>0?'рост':'падение');
+          }
+        }
+        pillHtml=rbPill(txt,good);
+      }
+    }
+    return '<div class="kpi"><div class="l">'+esc(f.l)+'</div>'+
+      '<div class="v">'+shown+'</div>'+was+pillHtml+'</div>';
+  }).join('');
+
+  var html='<div class="sec-head"><h2>Main Board Retention</h2><div class="hint">'+
+    esc(geoName(STATE.geo))+' · '+esc(monthLabel(STATE.month))+
+    (pmid?' к '+esc(monthLabel(pmid)):'')+' — показатели отдела ретеншена</div></div>';
+  var tbl = retTableBlock();
+  var extra = topSendsBlock(c) + reactFinBlock(c);
+  if(!tbl && !extra) return html+'<div class="card"><div class="empty">За '+esc(monthLabel(STATE.month))+
+    ' по гео «'+esc(geoName(STATE.geo))+'» показателей ретеншена нет.<br>'+
+    'Включите режим правки и впишите цифры, либо пришлите отчёт — внесу.</div></div>';
+  if(tbl){
+    html+=tbl;
+    var rbase=(c.retention&&c.retention.base)?c.retention.base:'';
+    if(rbase||STATE.editing)
+      html+='<div style="font-size:12.5px;color:var(--ink-soft);line-height:1.55;margin:10px 0 4px">'+
+        ed(base()+'.retention.base', rbase, 'text')+'</div>';
+    html+='<div style="font-size:12.5px;color:var(--ink-faint);line-height:1.5;margin:8px 0 4px">'+
+      'Источник — месячный отчёт отдела ретеншена. «Регистрации» здесь считаются по базе ретеншена и не совпадают с New registrations на Main Board: там источник Event Promo &amp; B2B CRM.'+
+      (STATE.editing?' <b>Время до первого депозита вводится в минутах.</b>':'')+'</div>';
+  }
+  html+=extra;
+  return html;
+}
+
+function retTableBlock(){
+  var c=cur(); if(!c) return '';
+  var pm=prevData(), pmid=prevMonthId();
+  var any=false;
+  var body=RB_FIELDS.map(function(f){
+    var v=digPath(c,f.path), pv=pm?digPath(pm,f.path):null;
+    if(v==null) return '';
+    any=true;
+    var show=function(x){
+      if(x==null) return '—';
+      return f.kind==='time' ? hhmm(x) : fmt(x, f.kind==='pp'?'%':'');
+    };
+    var dcell='—';
+    if(typeof pv==='number'){
+      var good=null, txt='';
+      if(f.kind==='pp'){
+        var dpp=(v-pv)*100;
+        if(Math.abs(dpp)<0.005){ txt='без изменений'; }
+        else { good = f.worseUp ? dpp<0 : dpp>0;
+               txt=(dpp>0?'▲ +':'▼ −')+Math.abs(dpp).toFixed(2).replace(/0+$/,'').replace(/\.$/,'')+' п.п.'; }
+      } else if(f.kind==='time'){
+        var dm=v-pv;
+        if(dm===0){ txt='без изменений'; }
+        else { good = dm<0; txt=(dm>0?'▲ +':'▼ −')+hhmm(Math.abs(dm)); }
+      } else if(pv!==0){
+        var dp=(v-pv)/pv*100;
+        if(Math.abs(dp)<0.05){ txt='без изменений'; }
+        else { good = f.worseUp ? dp<0 : dp>0;
+               txt=(dp>0?'▲ +':'▼ −')+Math.abs(dp).toFixed(1).replace(/\.0$/,'')+'%'; }
+      }
+      if(txt) dcell='<span class="d '+(good===null?'':(good?'up':'down'))+'">'+esc(txt)+'</span>';
+    }
+    return '<tr><td class="name">'+esc(f.l)+'</td>'+
+      '<td class="num mcur">'+show(v)+'</td>'+
+      '<td class="num">'+show(pv)+'</td>'+
+      '<td class="num">'+dcell+'</td></tr>';
+  }).join('');
+  if(!any) return '';
+  return '<div class="card full"><h3>Ретеншен · '+esc(monthLabel(STATE.month))+'</h3>'+
+    '<div style="font-size:12px;color:var(--ink-faint);margin:-6px 0 10px">'+
+      'Показатели отдела ретеншена. Дельта считается сама: доли — в пунктах, абсолютные — в процентах</div>'+
+    '<div class="tw"><table><thead><tr><th>Показатель</th>'+
+      '<th class="num mcur">'+esc(monthLabel(STATE.month))+'</th>'+
+      '<th class="num">'+(pmid?esc(monthLabel(pmid)):'—')+'</th>'+
+      '<th class="num">Δ</th></tr></thead><tbody>'+body+'</tbody></table></div></div>';
+}
+
+function casinoBlock(){
+  var ids=geoMonths(STATE.geo).map(function(m){return m.id;});
+  var cutoff=ids.indexOf(STATE.month);
+  var win=ids.slice(0, cutoff<0?ids.length:cutoff+1).slice(-3);
+  var cm=win[win.length-1], prevM=win.length>1?win[win.length-2]:null;
+  var all=D.tournaments[STATE.geo]||[], b='tournaments.'+STATE.geo;
+
+  var pv=function(t,mid){ var v=(t.playersByMonth||{})[mid]; return (typeof v==='number')?v:null; };
+  var uv=function(t,mid){ var v=(t.usesByMonth||{})[mid];    return (typeof v==='number')?v:null; };
+
+  var tot={}, cnt={};
+  win.forEach(function(mid){
+    tot[mid]={p:0,u:0}; cnt[mid]=0;
+    all.forEach(function(t){
+      var a=pv(t,mid), c=uv(t,mid);
+      if(a===null && c===null) return;
+      tot[mid].p+=a||0; tot[mid].u+=c||0; cnt[mid]++;
+    });
+  });
+
+  var rows=[];
+  all.forEach(function(t,i){
+    var has = pv(t,cm)!==null || uv(t,cm)!==null;
+    if(!has && !t.pending && !STATE.editing) return;
+    rows.push({t:t,i:i});
+  });
+  var hiddenC=all.length-rows.length;
+  var waitCnt=rows.filter(function(r){ return r.t.pending && pv(r.t,cm)===null && uv(r.t,cm)===null; }).length;
+  rows.sort(function(a,z){
+    var d=(pv(z.t,cm)||0)-(pv(a.t,cm)||0);
+    if(d) return d;
+    return String(a.t.name||'').localeCompare(String(z.t.name||''),'ru');
+  });
+
+  if(!rows.length && !cnt[cm] && !STATE.editing) return '';
+
+  var isCur=function(k){ return k===win.length-1; };
+  var c1=function(k){ return 'mgrp mhead'+(isCur(k)?' mcur':''); };
+  var c2=function(k){ return 'num mgrp'+(isCur(k)?' mcur':''); };
+  var c3=function(k){ return 'num'+(isCur(k)?' mcur':''); };
+
+  var head1='<tr><th rowspan="2">Активность</th><th rowspan="2">Период</th>'+
+    win.map(function(mid,k){ return '<th class="'+c1(k)+'" colspan="2">'+esc(monthLabel(mid))+'</th>'; }).join('')+
+    '<th rowspan="2"></th></tr>';
+  var head2='<tr>'+win.map(function(mid,k){
+      return '<th class="'+c2(k)+'">Участ.</th><th class="'+c3(k)+'">Прокруток</th>';
+    }).join('')+'</tr>';
+
+  var foot='<tr style="background:var(--accent-soft);font-weight:700"><td>Итого за месяц</td><td></td>'+
+    win.map(function(mid,k){
+      var dp=(isCur(k)&&prevM&&tot[mid].p&&tot[prevM].p)?dmini(tot[mid].p,tot[prevM].p):'';
+      var du=(isCur(k)&&prevM&&tot[mid].u&&tot[prevM].u)?dmini(tot[mid].u,tot[prevM].u):'';
+      return '<td class="'+c2(k)+'">'+(tot[mid].p?fmt(tot[mid].p,''):'—')+dp+'</td>'+
+             '<td class="'+c3(k)+'">'+(tot[mid].u?fmt(tot[mid].u,''):'—')+du+'</td>';
+    }).join('')+'<td></td></tr>';
+
+  var open = STATE.casinoOpen || STATE.editing;
+  var body = !open ? '' : rows.map(function(r){
+    var t=r.t, tb=b+'.'+r.i;
+    var cells=win.map(function(mid,k){
+      var a=pv(t,mid), c=uv(t,mid);
+      var dp='', du='';
+      if(isCur(k)&&prevM){ dp=dmini(a, pv(t,prevM)); du=dmini(c, uv(t,prevM)); }
+      return '<td class="'+c2(k)+'">'+ed(tb+'.playersByMonth.'+mid, a, '')+dp+'</td>'+
+             '<td class="'+c3(k)+'">'+ed(tb+'.usesByMonth.'+mid, c, '')+du+'</td>';
+    }).join('');
+    var waiting = t.pending && pv(t,cm)===null && uv(t,cm)===null;
+    return '<tr'+(waiting?' style="opacity:.75"':'')+'><td class="name">'+ed(tb+'.name',t.name,'text')+
+      (waiting?' <span style="display:inline-block;padding:2px 7px;border-radius:999px;font-size:10.5px;'+
+               'font-weight:700;color:var(--ink-faint);background:rgba(123,117,112,.14);vertical-align:middle">ждём данные</span>':'')+
+      (t.game?'<div class="sub">'+esc(t.game)+'</div>':'')+'</td>'+
+      '<td>'+ed(tb+'.period',t.period,'text')+'</td>'+cells+
+      '<td><button class="rowdel" data-del="'+b+'|'+r.i+'">×</button></td></tr>';
+  }).join('');
+
+  return '<div class="card full" style="margin-top:15px"><h3>Casino tournaments</h3>'+
+    '<div style="font-size:12px;color:var(--ink-faint);margin:-6px 0 10px">'+
+      (open?'Активности казино за три месяца. Сортировка — по участникам текущего месяца'
+           :'Сводка за три месяца. Список активностей свёрнут — кнопка под таблицей')+'</div>'+
+    '<div class="tw"><table><thead>'+head1+head2+'</thead><tbody>'+foot+body+'</tbody></table></div>'+
+    '<button class="btn" data-toggle="casino" style="margin-top:10px">'+
+      (open?'Свернуть список':'Показать активности ('+rows.length+')')+'</button>'+
+    (open?' <button class="btn addrow" data-add="tourn">+ Добавить активность</button>':'')+
+    (open?'<div style="margin-top:8px;font-size:12px;color:var(--ink-faint)">'+
+      '«Итого» — по всем активностям месяца: '+cnt[cm]+' шт. за '+esc(monthLabel(cm))+'.'+
+      (hiddenC?' Скрыто строк без данных за этот месяц: '+hiddenC+'. В режиме правки видно все.':'')+
+      '</div>':'')+
+    '</div>';
+}
+
 function secTotals(){
   var c=cur(), p=prevData();
   if(!c) return emptyMonth();
@@ -671,17 +954,20 @@ function secTotals(){
   var ids=geoMonths(STATE.geo).map(function(m){ return m.id; });
   var cut=ids.indexOf(STATE.month);
   html+='<div class="kpis">'+TOTAL_FIELDS.map(function(f){
-    var v=c.totals?c.totals[f.k]:null, pv=null, pvMid=null;
+    var v=f.calc?f.calc(c):(c.totals?c.totals[f.k]:null), pv=null, pvMid=null;
     for(var i=cut-1;i>=0;i--){
       var o=(D.data[STATE.geo]||{})[ids[i]];
-      var x=o&&o.totals?o.totals[f.k]:null;
+      var x=f.calc?f.calc(o):(o&&o.totals?o.totals[f.k]:null);
       if(typeof x==='number'){ pv=x; pvMid=ids[i]; break; }
     }
-    if(v==null && pv==null) return '';
+    if(v==null && (!STATE.editing || f.calc)) return '';
     var gap = (pvMid && cut>0 && pvMid!==ids[cut-1]);
+    var warn = (f.calc && typeof v==='number' && v>1)
+      ? '<div class="pv" style="color:var(--amber);font-weight:700">больше 100% — проверьте, что делим</div>' : '';
     return '<div class="kpi"><div class="l">'+esc(f.l)+'</div>'+
-      '<div class="v">'+ed(base()+'.totals.'+f.k, v, f.unit)+'</div>'+
-      delta(v,pv,'up')+
+      '<div class="v"'+(warn?' style="color:var(--amber)"':'')+'>'+
+        (f.calc?fmt(v,f.unit):ed(base()+'.totals.'+f.k, v, f.unit))+'</div>'+warn+
+      delta(v,pv,'up',f.unit==='%')+
       (typeof pv==='number'
         ? '<div class="pv">было '+fmt(pv,f.unit)+(gap?' ('+esc(monthLabel(pvMid))+')':'')+'</div>'
         : '')+'</div>';
@@ -689,13 +975,12 @@ function secTotals(){
 
   html+=smmBlock(c);
   html+=promoBlock();
+  html+=casinoBlock();
+  html+=promoBlock('top');
 
-  html+=retBlock(c);
 
-  html+=topSendsBlock(c);
   return html;
 }
-
 function num(v){ return typeof v==='number'?v:null; }
 function shorten(s){ s=String(s||''); return s.length>16 ? s.slice(0,15)+'…' : s; }
 
@@ -712,7 +997,7 @@ function col2(){
   var g=D.geos.filter(function(x){ return x.id===STATE.geo; })[0];
   return (g && typeof g.col2==='string') ? g.col2 : 'Клики';
 }
-function promoBlock(){
+function promoBlock(part){
   var ids=geoMonths(STATE.geo).map(function(m){return m.id;});
   var cutoff=ids.indexOf(STATE.month);
   var win=ids.slice(0, cutoff<0?ids.length:cutoff+1).slice(-3);
@@ -728,6 +1013,9 @@ function promoBlock(){
     Object.keys(byMonth[mid]).forEach(function(n){ if(!seen[n]){ seen[n]=1; names.push(n); } });
   });
   var cm=win[win.length-1];
+  win = win.filter(function(mid){
+    return mid===cm || Object.keys(byMonth[mid]).length>0;
+  });
   var prevM = win.length>1 ? win[win.length-2] : null;
   var curVal=function(n){
     var e=byMonth[cm][n];
@@ -765,9 +1053,21 @@ function promoBlock(){
       return '<th class="'+c2(k)+'">Участ.</th>'+(two?'<th class="'+c3(k)+'">'+esc(col2())+'</th>':'');
     }).join('')+'</tr>';
 
-  var tot={};
-  win.forEach(function(mid){ tot[mid]={u:0,o:0}; });
-  var body=names.map(function(n){
+  var tot={}, cnt={};
+  win.forEach(function(mid){
+    tot[mid]={u:0,o:0}; cnt[mid]=0;
+    names.forEach(function(n){
+      var e=byMonth[mid][n];
+      if(!e) return;
+      tot[mid].u+=num(e.p.users)||0;
+      tot[mid].o+=num(e.p.ops)||0;
+      cnt[mid]++;
+    });
+  });
+
+  var shown=names.filter(function(n){ return byMonth[cm][n] || STATE.editing; });
+  var hiddenPromo=names.length-shown.length;
+  var body=shown.map(function(n){
     var meta=null, metaMid=null;
     win.slice().reverse().forEach(function(mid){ if(!meta&&byMonth[mid][n]){ meta=byMonth[mid][n]; metaMid=mid; } });
     var mb='data.'+STATE.geo+'.'+metaMid+'.promos.'+meta.idx;
@@ -776,7 +1076,6 @@ function promoBlock(){
       var e=byMonth[mid][n];
       if(!e) return '<td class="'+c2(k)+'" style="color:var(--ink-faint)">—</td>'+
                     (two?'<td class="'+c3(k)+'" style="color:var(--ink-faint)">—</td>':'');
-      tot[mid].u+=num(e.p.users)||0; tot[mid].o+=num(e.p.ops)||0;
       var pb='data.'+STATE.geo+'.'+mid+'.promos.'+e.idx;
       var du='', doo='';
       if(isCur(k)&&prevMid){
@@ -796,10 +1095,10 @@ function promoBlock(){
 
   var pm = win.length>1 ? win[win.length-2] : null;
   var foot='<tr style="background:var(--accent-soft);font-weight:700"><td>Итого</td><td></td><td></td>'+win.map(function(mid,k){
-    var du = (isCur(k)&&pm) ? dmini(tot[mid].u, tot[pm].u) : '';
-    var doo= (isCur(k)&&pm) ? dmini(tot[mid].o, tot[pm].o) : '';
-    return '<td class="'+c2(k)+'">'+fmt(tot[mid].u,'')+du+'</td>'+
-           (two?'<td class="'+c3(k)+'">'+fmt(tot[mid].o,'')+doo+'</td>':'');
+    var du = (isCur(k)&&pm&&tot[mid].u&&tot[pm].u) ? dmini(tot[mid].u, tot[pm].u) : '';
+    var doo= (isCur(k)&&pm&&tot[mid].o&&tot[pm].o) ? dmini(tot[mid].o, tot[pm].o) : '';
+    return '<td class="'+c2(k)+'">'+(tot[mid].u?fmt(tot[mid].u,''):'—')+du+'</td>'+
+           (two?'<td class="'+c3(k)+'">'+(tot[mid].o?fmt(tot[mid].o,''):'—')+doo+'</td>':'');
   }).join('')+'<td></td></tr>';
 
   var top3=names.filter(function(n){ return byMonth[cm][n]; })
@@ -811,17 +1110,45 @@ function promoBlock(){
         '<div class="s" style="font-size:15px;font-weight:700;color:var(--ink);margin-top:6px">'+
           fmt(num(e.p.users),'')+' участников '+dm+'</div></div>';
     }).join('');
+  var isSit=function(n){
+    var e=byMonth[cm][n];
+    return !!e && /ситуат/i.test(String(e.p.type||''));
+  };
+  var topSit=names.filter(function(n){
+      return isSit(n) && (num(byMonth[cm][n].p.users)||0)>0;
+    }).slice(0,3).map(function(n,rank){
+      var e=byMonth[cm][n], pe=prevM?byMonth[prevM][n]:null;
+      var dm=dmini(num(e.p.users), pe?num(pe.p.users):null);
+      return '<div class="w"><div class="l">'+(rank+1)+' место · '+esc(e.p.vertical||'—')+'</div>'+
+        '<div class="v" style="font-size:16px;line-height:1.3">'+esc(e.p.name)+'</div>'+
+        '<div class="s" style="font-size:15px;font-weight:700;color:var(--ink);margin-top:6px">'+
+          fmt(num(e.p.users),'')+' участников '+dm+'</div></div>';
+    }).join('');
+
   var head = top3 ? '<div class="sec-head" style="margin-top:18px"><h2 style="font-size:16px">ТОП-3 промо · '+
       esc(monthLabel(cm))+'</h2></div><div class="work" style="margin-bottom:15px">'+top3+'</div>' : '';
+  if(topSit) head += '<div class="sec-head"><h2 style="font-size:16px">ТОП-3 промо СИТУАТИВ · '+
+      esc(monthLabel(cm))+'</h2><div class="hint">Только ситуативные акции — без перманентов, чтобы было видно, что дали события месяца</div></div>'+
+      '<div class="work" style="margin-bottom:15px">'+topSit+'</div>';
 
-  return head+'<div class="card full"><h3>Промо-акции</h3>'+
-    '<div style="font-size:12px;color:var(--ink-faint);margin:-6px 0 10px">Три месяца подряд, чтобы видеть движение. Сортировка — по участникам текущего месяца</div>'+
+  var open = STATE.promoOpen || STATE.editing;
+  var cardHtml = '<div class="card full"><h3>Промо-акции</h3>'+
+    '<div style="font-size:12px;color:var(--ink-faint);margin:-6px 0 10px">'+
+      (open
+        ? 'Три месяца подряд, чтобы видеть движение. Сортировка — по участникам текущего месяца'
+        : 'Сводка за три месяца. Подробный список промо свёрнут — кнопка под таблицей')+'</div>'+
     '<div class="t-wrap"><table><thead>'+head1+head2+'</thead>'+
-    '<tbody>'+foot+(body||'<tr><td colspan="'+(4+win.length*(two?2:1))+'" class="empty">Нет промо за период</td></tr>')+'</tbody>'+
+    '<tbody>'+foot+(open?(body||'<tr><td colspan="'+(4+win.length*(two?2:1))+'" class="empty">Нет промо за период</td></tr>'):'')+'</tbody>'+
     '</table></div>'+
-    '<button class="btn addrow" data-add="promo">+ Добавить промо в '+esc(monthLabel(cm))+'</button></div>';
+    '<button class="btn" data-toggle="promo" style="margin-top:10px">'+
+      (open?'Свернуть список':'Показать список промо ('+shown.length+')')+'</button>'+
+    (open?' <button class="btn addrow" data-add="promo">+ Добавить промо в '+esc(monthLabel(cm))+'</button>':'')+
+    (open?'<div style="margin-top:8px;font-size:12px;color:var(--ink-faint)">'+
+      '«Итого» — сумма по всем промо месяца: '+cnt[cm]+' шт. за '+esc(monthLabel(cm))+'.'+
+      (hiddenPromo?' Скрыто строк без данных за этот месяц: '+hiddenPromo+' — они не влияют на итог текущего месяца, но входят в итоги своих месяцев, поэтому колонки прошлых месяцев больше суммы видимых строк. В режиме правки видно все.':'')+
+      '</div>':'')+'</div>'
+  return part==='top' ? head : cardHtml;
 }
-
 function monthStartDate(mid){
   var a=String(mid||'').split('-');
   return new Date(+a[0], (+a[1]||1)-1, 1, 0,0,0);
@@ -1072,7 +1399,7 @@ function render(){
   renderShell();
   var app=document.getElementById('app'), html='';
   if(STATE.tab==='totals') html=secTotals();
-  else if(STATE.tab==='tourn') html=secTourn();
+  else if(STATE.tab==='retboard') html=secRetBoard();
   else if(STATE.tab==='agents') html=secAgents();
   if(D.meta.demo) html+='<div class="demo"><b>Это демо-данные.</b> Цифры и тексты вымышленные — они здесь, чтобы было видно, как дашборд выглядит заполненным. Замените своими (кнопка «✎ Редактировать») или пришлите цифры в чат.</div>';
   app.innerHTML=html;
@@ -1088,6 +1415,13 @@ function enableEdit(){
 
 /* ---------- events ---------- */
 document.body.addEventListener('click', function(e){
+  var tg=e.target.closest('[data-toggle]');
+  if(tg){
+    var tn=tg.getAttribute('data-toggle');
+    if(tn==='promo'){ STATE.promoOpen=!STATE.promoOpen; render(); }
+    else if(tn==='casino'){ STATE.casinoOpen=!STATE.casinoOpen; render(); }
+    return;
+  }
   var g=e.target.closest('[data-geo]');
   if(g){ STATE.geo=g.getAttribute('data-geo'); render(); window.scrollTo(0,0); return; }
   var t=e.target.closest('[data-tab]');
